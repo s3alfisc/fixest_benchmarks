@@ -1,6 +1,7 @@
 # Pyfixest timer functions using CSV + subprocess (no reticulate)
 
-.pyfixest_python_path <- here::here(".venv", "bin", "python")
+# Use pixi's Python environment (pyfixest built from source)
+.pyfixest_python_path <- here::here("pyfixest", ".pixi", "envs", "dev", "bin", "python")
 .pyfixest_cli_path <- here::here("timers", "pyfixest_cli.py")
 
 .run_pyfixest_timer <- function(df, formula, method = "feols") {

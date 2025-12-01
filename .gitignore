@@ -4,3 +4,6 @@ data/Medicare_Provider_Util_Payment_PUF_CY2016.txt
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+# cloned pyfixest for building
+pyfixest/
+.venv/
