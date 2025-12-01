@@ -1,3 +1,6 @@
 **/.DS_Store
 data/nyc_taxi.parquet
 data/Medicare_Provider_Util_Payment_PUF_CY2016.txt
+# pixi environments
+.pixi/*
+!.pixi/config.toml

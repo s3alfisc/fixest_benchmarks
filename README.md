@@ -25,6 +25,51 @@ for review.
 > ensure that the benchmarks are run in a consistent environment so that
 > individuals can use these benchmarks as a potential dev tool.
 
+## Setup
+
+### Prerequisites
+
+You need the following installed on your system:
+
+- **R** (>= 4.4.0)
+- **Python** (>= 3.13)
+- **Julia** (>= 1.11)
+- **[just](https://github.com/casey/just)** - command runner
+- **[uv](https://github.com/astral-sh/uv)** - Python package manager
+
+### Installation
+
+Install all dependencies with:
+
+```bash
+just setup
+```
+
+This runs:
+- `renv::restore()` to install R packages from `renv.lock`
+- `uv sync` to install Python packages from `pyproject.toml`
+- `Pkg.instantiate()` to install Julia packages from `Project.toml`
+
+### Running Benchmarks
+
+```bash
+# Run all simulated data benchmarks
+just bench-all
+
+# Run individual benchmarks
+just bench-ols
+just bench-poisson
+just bench-logit
+
+# Download real datasets and run all benchmarks
+just run-all
+
+# Generate summary plots and tables
+just summarize
+```
+
+Run `just` to see all available commands.
+
 ## Simulation DGP
 
 The code below is used to generate the simulated data for the

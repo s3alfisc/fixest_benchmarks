@@ -6,5 +6,5 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
   "pandas",
-  "pyfixest"
+  "pyfixest==0.40.1"
 ]

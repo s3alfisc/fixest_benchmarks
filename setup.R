@@ -1,7 +1,6 @@
 # %%
 library(data.table)
 library(fixest)
-library(reticulate)
 library(JuliaCall)
 library(here)
 
@@ -13,11 +12,8 @@ source("timers/alpaca.R")
 options(lfe.threads = 2)
 setFixest_nthreads(2)
 
-# setup python
-reticulate::use_virtualenv(here(".venv"), required = TRUE)
-pd = reticulate::import("pandas")
-pf = reticulate::import("pyfixest")
-reticulate::source_python("timers/pyfixest.py")
+# setup python (via CSV + subprocess, no reticulate)
+source("timers/pyfixest.R")
 
 # setup julia
 # This chaos is due to: https://github.com/JuliaInterop/JuliaCall/issues/238
