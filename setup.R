@@ -85,6 +85,7 @@ run_benchmark <- function(
     dgp <- dgps$dgp_function[[dgp_k]]
     n_iters <- dgps$n_iters[dgp_k]
     cat("---- Starting DGP ----\n")
+    cat()
     print(subset(dgps[dgp_k, ], select = -c(dgp_function)))
     cat("\n")
 
