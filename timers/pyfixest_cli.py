@@ -10,7 +10,7 @@ def main():
     parser.add_argument("csv_path", help="Path to input CSV")
     parser.add_argument("formula", help="Formula string")
     parser.add_argument("--method", choices=["feols", "fepois", "feglm_logit"], default="feols")
-    parser.add_argument("--backend", choices=["rust", "rust-accelerated"], default="rust")
+    parser.add_argument("--backend", choices=["rust", "rust-accelerated", "jax", "cupy32", "cupy64", "scipy"], default="rust")
     args = parser.parse_args()
 
     data = pd.read_csv(args.csv_path)
