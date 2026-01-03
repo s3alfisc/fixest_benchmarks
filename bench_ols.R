@@ -1,22 +1,22 @@
 # %%
 source("setup.R")
 source("dgp_functions.R")
-options(lfe.threads = 2)
-setFixest_nthreads(2)
+options(lfe.threads = 8)
+setFixest_nthreads(8)
 
 # %%
 # fmt: skip
 bench_ols_small <- run_benchmark(
   dgps = data.table::rowwiseDT(
     dgp_name=, n_iters=, n_obs=, dgp_function=,
-    "simple",    10L, 1e3, list(\() base_dgp(n = 1e3, type = "simple")),
-    "difficult", 10L, 1e3, list(\() base_dgp(n = 1e3, type = "difficult")),
-    "simple",    10L, 1e4, list(\() base_dgp(n = 1e4, type = "simple")),
-    "difficult", 10L, 1e4, list(\() base_dgp(n = 1e4, type = "difficult")),
-    "simple",    10L, 1e5, list(\() base_dgp(n = 1e5, type = "simple")),
-    "difficult",  5L, 1e5, list(\() base_dgp(n = 1e5, type = "difficult")),
-    "simple",     5L, 5e5, list(\() base_dgp(n = 5e5, type = "simple")),
-    "difficult",  5L, 5e5, list(\() base_dgp(n = 5e5, type = "difficult")),
+    "simple",     3L, 1e3, list(\() base_dgp(n = 1e3, type = "simple")),
+    "difficult",  3L, 1e3, list(\() base_dgp(n = 1e3, type = "difficult")),
+    "simple",     3L, 1e4, list(\() base_dgp(n = 1e4, type = "simple")),
+    "difficult",  3L, 1e4, list(\() base_dgp(n = 1e4, type = "difficult")),
+    "simple",     3L, 1e5, list(\() base_dgp(n = 1e5, type = "simple")),
+    "difficult",  3L, 1e5, list(\() base_dgp(n = 1e5, type = "difficult")),
+    "simple",     3L, 5e5, list(\() base_dgp(n = 5e5, type = "simple")),
+    "difficult",  3L, 5e5, list(\() base_dgp(n = 5e5, type = "difficult")),
     "simple",     3L, 1e6, list(\() base_dgp(n = 1e6, type = "simple")),
     "simple",     3L, 2e6, list(\() base_dgp(n = 2e6, type = "simple"))
   ),
@@ -25,26 +25,8 @@ bench_ols_small <- run_benchmark(
     "pyfixest.feols (rust)", 2L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "rust")
     }),
-    "pyfixest.feols (rust-accelerated)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "rust-accelerated")
-    }),
-    "pyfixest.feols (jax)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "jax")
-    }),
-    "pyfixest.feols (scipy)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "scipy")
-    }),
-    "pyfixest.feols (cupy32)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "cupy32")
-    }),
-    "pyfixest.feols (cupy64)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "cupy64")
-    }),
-    "FixedEffectModels.reg", 2L, list(\(df) {
-      julia_call("jl_feols_timer", df, "y ~ x1 + fe(indiv_id) + fe(year)")
-    }),
-    "fixest::feols", 2L, list(\(df) {
-      feols_timer(df, y ~ x1 | indiv_id + year)
+    "pyfixest.feols (numba)", 2L, list(\(df) {
+      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "numba")
     }),
     "linearmodels.AbsorbingLS", 2L, list(\(df) {
       absorbingls_timer(df, "y ~ x1 | indiv_id + year")
@@ -55,26 +37,8 @@ bench_ols_small <- run_benchmark(
     "pyfixest.feols (rust)", 3L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust")
     }),
-    "pyfixest.feols (rust-accelerated)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust-accelerated")
-    }),
-    "pyfixest.feols (jax)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "jax")
-    }),
-    "pyfixest.feols (scipy)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "scipy")
-    }),
-    "pyfixest.feols (cupy32)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "cupy32")
-    }),
-    "pyfixest.feols (cupy64)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "cupy64")
-    }),
-    "FixedEffectModels.reg", 3L, list(\(df) {
-      julia_call("jl_feols_timer", df, "y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)")
-    }),
-    "fixest::feols", 3L, list(\(df) {
-      feols_timer(df, y ~ x1 | indiv_id + year + firm_id)
+    "pyfixest.feols (numba)", 3L, list(\(df) {
+      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "numba")
     }),
     "linearmodels.AbsorbingLS", 3L, list(\(df) {
       absorbingls_timer(df, "y ~ x1 | indiv_id + year + firm_id")
@@ -96,26 +60,8 @@ bench_ols_medium <- run_benchmark(
     "pyfixest.feols (rust)", 2L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "rust")
     }),
-    "pyfixest.feols (rust-accelerated)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "rust-accelerated")
-    }),
-    "pyfixest.feols (jax)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "jax")
-    }),
-    "pyfixest.feols (scipy)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "scipy")
-    }),
-    "pyfixest.feols (cupy32)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "cupy32")
-    }),
-    "pyfixest.feols (cupy64)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "cupy64")
-    }),
-    "FixedEffectModels.reg", 2L, list(\(df) {
-      julia_call("jl_feols_timer", df, "y ~ x1 + fe(indiv_id) + fe(year)")
-    }),
-    "fixest::feols", 2L, list(\(df) {
-      feols_timer(df, y ~ x1 | indiv_id + year)
+    "pyfixest.feols (numba)", 2L, list(\(df) {
+      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "numba")
     }),
     "linearmodels.AbsorbingLS", 2L, list(\(df) {
       absorbingls_timer(df, "y ~ x1 | indiv_id + year")
@@ -126,26 +72,8 @@ bench_ols_medium <- run_benchmark(
     "pyfixest.feols (rust)", 3L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust")
     }),
-    "pyfixest.feols (rust-accelerated)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust-accelerated")
-    }),
-    "pyfixest.feols (jax)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "jax")
-    }),
-    "pyfixest.feols (scipy)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "scipy")
-    }),
-    "pyfixest.feols (cupy32)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "cupy32")
-    }),
-    "pyfixest.feols (cupy64)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "cupy64")
-    }),
-    "FixedEffectModels.reg", 3L, list(\(df) {
-      julia_call("jl_feols_timer", df, "y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)")
-    }),
-    "fixest::feols", 3L, list(\(df) {
-      feols_timer(df, y ~ x1 | indiv_id + year + firm_id)
+    "pyfixest.feols (numba)", 3L, list(\(df) {
+      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "numba")
     }),
     "linearmodels.AbsorbingLS", 3L, list(\(df) {
       absorbingls_timer(df, "y ~ x1 | indiv_id + year + firm_id")
@@ -167,26 +95,8 @@ bench_ols_large <- run_benchmark(
     "pyfixest.feols (rust)", 2L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "rust")
     }),
-    "pyfixest.feols (rust-accelerated)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "rust-accelerated")
-    }),
-    "pyfixest.feols (jax)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "jax")
-    }),
-    "pyfixest.feols (scipy)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "scipy")
-    }),
-    "pyfixest.feols (cupy32)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "cupy32")
-    }),
-    "pyfixest.feols (cupy64)", 2L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "cupy64")
-    }),
-    "FixedEffectModels.reg", 2L, list(\(df) {
-      julia_call("jl_feols_timer", df, "y ~ x1 + fe(indiv_id) + fe(year)")
-    }),
-    "fixest::feols", 2L, list(\(df) {
-      feols_timer(df, y ~ x1 | indiv_id + year)
+    "pyfixest.feols (numba)", 2L, list(\(df) {
+      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year", backend = "numba")
     }),
     "linearmodels.AbsorbingLS", 2L, list(\(df) {
       absorbingls_timer(df, "y ~ x1 | indiv_id + year")
@@ -197,26 +107,8 @@ bench_ols_large <- run_benchmark(
     "pyfixest.feols (rust)", 3L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust")
     }),
-    "pyfixest.feols (rust-accelerated)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust-accelerated")
-    }),
-    "pyfixest.feols (jax)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "jax")
-    }),
-    "pyfixest.feols (scipy)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "scipy")
-    }),
-    "pyfixest.feols (cupy32)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "cupy32")
-    }),
-    "pyfixest.feols (cupy64)", 3L, list(\(df) {
-      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "cupy64")
-    }),
-    "FixedEffectModels.reg", 3L, list(\(df) {
-      julia_call("jl_feols_timer", df, "y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)")
-    }),
-    "fixest::feols", 3L, list(\(df) {
-      feols_timer(df, y ~ x1 | indiv_id + year + firm_id)
+    "pyfixest.feols (numba)", 3L, list(\(df) {
+      pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "numba")
     }),
     "linearmodels.AbsorbingLS", 3L, list(\(df) {
       absorbingls_timer(df, "y ~ x1 | indiv_id + year + firm_id")

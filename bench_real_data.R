@@ -144,12 +144,12 @@ bench_medicare_ols <- run_benchmark(
   ),
   estimators = data.table::rowwiseDT(
     est_name=, func=,
-    # "pyfixest.feols", list(\(df) {
-    #   pyfixest_feols_timer(
-    #     df,
-    #     "average_Medicare_payment_amt ~ line_srvc_cnt + bene_unique_cnt | nppes_provider_state + provider_type + hcpcs_code"
-    #   )
-    # }),
+    "pyfixest.feols", list(\(df) {
+      pyfixest_feols_timer(
+        df,
+        "average_Medicare_payment_amt ~ line_srvc_cnt + bene_unique_cnt | nppes_provider_state + provider_type + hcpcs_code"
+      )
+    }),
     "FixedEffectModels.reg", list(\(df) {
       julia_call(
         "jl_feols_timer",

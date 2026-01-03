@@ -9,8 +9,8 @@ library(here)
 source("timers/fixest.R")
 source("timers/lfe.R")
 source("timers/alpaca.R")
-options(lfe.threads = 2)
-setFixest_nthreads(2)
+options(lfe.threads = 8)
+setFixest_nthreads(8)
 
 # setup python (via CSV + subprocess, no reticulate)
 source("timers/pyfixest.R")
@@ -80,25 +80,52 @@ run_benchmark <- function(
   burn_in = 1L
 ) {
   res <- NULL
+  total_dgps <- nrow(dgps)
+  total_estimators <- nrow(estimators)
+
   cat("\n")
+  cat("================================================================================\n")
+  cat("BENCHMARK: ", ifelse(name == "", "OLS", name), "\n")
+  cat("================================================================================\n")
+  cat("DGPs:", total_dgps, "| Estimators:", total_estimators, "| Burn-in:", burn_in, "\n\n")
+
   for (dgp_k in seq_len(nrow(dgps))) {
     dgp <- dgps$dgp_function[[dgp_k]]
     n_iters <- dgps$n_iters[dgp_k]
-    cat("---- Starting DGP ----\n")
-    cat()
-    print(subset(dgps[dgp_k, ], select = -c(dgp_function)))
-    cat("\n")
+    n_obs <- dgps$n_obs[dgp_k]
+    dgp_name <- dgps$dgp_name[dgp_k]
+
+    cat("--------------------------------------------------------------------------------\n")
+    cat(sprintf("DGP %d/%d: %s | n_obs = %s | iterations = %d\n",
+                dgp_k, total_dgps, dgp_name, format(n_obs, big.mark = ","), n_iters))
+    cat("--------------------------------------------------------------------------------\n")
 
     i = 1L
     while (i <= n_iters + burn_in) {
-      cat(".")
+      iter_type <- if (i <= burn_in) sprintf("burn-in %d/%d", i, burn_in) else sprintf("iter %d/%d", i - burn_in, n_iters)
+      cat(sprintf("\n[%s] Generating data...\n", iter_type))
       df <- dgp()
+
       times <- unlist(lapply(seq_len(nrow(estimators)), function(estimator_k) {
+        est_name <- estimators$est_name[estimator_k]
+        n_fe <- estimators$n_fe[estimator_k]
+        cat(sprintf("  -> %-35s (FE=%d) ... ", est_name, n_fe))
+        flush.console()
+
         f <- estimators$func[[estimator_k]]
-        tryCatch(
+        start_ts <- Sys.time()
+        result <- tryCatch(
           f(df),
           error = function(error) NA_real_
         )
+        elapsed <- as.numeric(Sys.time() - start_ts, units = "secs")
+
+        if (is.na(result)) {
+          cat("FAILED\n")
+        } else {
+          cat(sprintf("%.2fs\n", result))
+        }
+        result
       }))
 
       if (i > burn_in) {
@@ -112,8 +139,12 @@ run_benchmark <- function(
       }
       i = i + 1
     }
-    cat("\n\n")
+    cat("\n")
   }
+
+  cat("================================================================================\n")
+  cat("BENCHMARK COMPLETE\n")
+  cat("================================================================================\n\n")
 
   return(res)
 }

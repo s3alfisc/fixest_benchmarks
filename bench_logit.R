@@ -1,8 +1,8 @@
 # %%
 source("setup.R")
 source("dgp_functions.R")
-options(lfe.threads = 2)
-setFixest_nthreads(2)
+options(lfe.threads = 8)
+setFixest_nthreads(8)
 
 # %%
 # fmt: skip

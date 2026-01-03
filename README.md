@@ -119,6 +119,7 @@ base_dgp <- function(
   unit_fe = rnorm(nb_indiv)[indiv_id]
   year_fe = rnorm(nb_year)[year]
   mu = 1 * x1 + 0.05 * x2 + firm_fe + unit_fe + year_fe
+  y = mu + rnorm(length(mu))
 
   df = data.frame(
     indiv_id = indiv_id,
@@ -126,10 +127,10 @@ base_dgp <- function(
     year = year,
     x1 = x1,
     x2 = x2,
-    y = mu,
-    negbin_y = MASS::rnegbin(exp(mu), theta = 0.5),
-    binary_y = as.numeric(mu > 0),
-    ln_y = log(abs(mu) + 1)
+    y = y,
+    exp_y = exp(y),
+    negbin_y = MASS::rnegbin(exp(y), theta = 0.5),
+    binary_y = as.numeric(y > 0)
   )
   return(df)
 }

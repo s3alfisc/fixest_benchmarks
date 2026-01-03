@@ -9,8 +9,8 @@ library(svglite)
 bench_ols = fread(here("results/bench_ols.csv"))
 bench_poisson = fread(here("results/bench_poisson.csv"))
 bench_logit = fread(here("results/bench_logit.csv"))
-bench_ols_multiple_y = fread(here("results/bench_ols_multiple_y.csv"))
-bench_ols_multiple_vcov = fread(here("results/bench_ols_multiple_vcov.csv"))
+# bench_ols_multiple_y = fread(here("results/bench_ols_multiple_y.csv"))
+# bench_ols_multiple_vcov = fread(here("results/bench_ols_multiple_vcov.csv"))
 bench_real_data = fread(here("results/bench_ols_real_data.csv"))
 
 
@@ -270,6 +270,8 @@ color_switch <- c(
   "fixest::fepois" = "#5C4CBF",
   "fixest logit" = "#5C4CBF",
   "pyfixest.feols" = "#2DB25F",
+  "pyfixest.feols (rust)" = "#2DB25F",
+  "pyfixest.feols (numba)" = "#1E88E5",
   "pyfixest.fepois" = "#2DB25F",
   "FixedEffectModels.reg" = "#0188AC",
   "GLFixedEffectModels logit" = "#0188AC",
@@ -354,7 +356,7 @@ summ_ols <- bench_ols |>
     x = "Number of Observations",
     y = "Mean Estimation Time",
     color = NULL,
-    caption = "Missing points indicate OOM errors or timeouts (>5 min)"
+    caption = "Missing points indicate OOM, numerical errors, or timeouts (>5 min)"
   ) +
   custom_theme(legend = "bottom"))
 
@@ -549,101 +551,101 @@ tab_latex_string <- tab_real_data |>
 cat(tab_latex_string, file = "results/table_real_data.tex", sep = "\n")
 
 
-## Multiple y ----
-(plot_ols_multiple_y <- bench_ols_multiple_y |>
-  _[,
-    .(
-      mean_time = mean(time, na.rm = TRUE),
-      n_failures = sum(is.na(time))
-    ),
-    by = setdiff(names(bench_ols_multiple_y), c("iter", "time"))
-  ] |>
-  ggplot() +
-  geom_point(
-    aes(
-      x = n_obs,
-      y = mean_time,
-      color = est_name
-    ),
-    size = 2,
-    shape = 15
-  ) +
-  geom_line(
-    aes(
-      x = n_obs,
-      y = mean_time,
-      color = est_name
-    ),
-    linewidth = 1.15
-  ) +
-  scale_x_continuous(
-    transform = "log10",
-    labels = scales::label_number(
-      scale_cut = scales::cut_long_scale()
-    )
-  ) +
-  scale_y_continuous(
-    breaks = c(0.01, 0.1, 1, 10, 60, 300),
-    transform = "log10",
-    labels = scales::label_timespan()
-  ) +
-  scale_color_manual(
-    values = color_switch
-  ) +
-  labs(
-    x = "Number of Observations",
-    y = "Mean Estimation Time",
-    color = NULL
-  ) +
-  custom_theme(legend = "bottom"))
+# ## Multiple y ----
+# (plot_ols_multiple_y <- bench_ols_multiple_y |>
+#   _[,
+#     .(
+#       mean_time = mean(time, na.rm = TRUE),
+#       n_failures = sum(is.na(time))
+#     ),
+#     by = setdiff(names(bench_ols_multiple_y), c("iter", "time"))
+#   ] |>
+#   ggplot() +
+#   geom_point(
+#     aes(
+#       x = n_obs,
+#       y = mean_time,
+#       color = est_name
+#     ),
+#     size = 2,
+#     shape = 15
+#   ) +
+#   geom_line(
+#     aes(
+#       x = n_obs,
+#       y = mean_time,
+#       color = est_name
+#     ),
+#     linewidth = 1.15
+#   ) +
+#   scale_x_continuous(
+#     transform = "log10",
+#     labels = scales::label_number(
+#       scale_cut = scales::cut_long_scale()
+#     )
+#   ) +
+#   scale_y_continuous(
+#     breaks = c(0.01, 0.1, 1, 10, 60, 300),
+#     transform = "log10",
+#     labels = scales::label_timespan()
+#   ) +
+#   scale_color_manual(
+#     values = color_switch
+#   ) +
+#   labs(
+#     x = "Number of Observations",
+#     y = "Mean Estimation Time",
+#     color = NULL
+#   ) +
+#   custom_theme(legend = "bottom"))
 
-## Multiple vcov ----
-(plot_ols_multiple_vcov <- bench_ols_multiple_vcov |>
-  _[,
-    .(
-      mean_time = mean(time, na.rm = TRUE),
-      n_failures = sum(is.na(time))
-    ),
-    by = setdiff(names(bench_ols_multiple_vcov), c("iter", "time"))
-  ] |>
-  ggplot() +
-  geom_point(
-    aes(
-      x = n_obs,
-      y = mean_time,
-      color = est_name
-    ),
-    size = 2,
-    shape = 15
-  ) +
-  geom_line(
-    aes(
-      x = n_obs,
-      y = mean_time,
-      color = est_name
-    ),
-    linewidth = 1.15
-  ) +
-  scale_x_continuous(
-    transform = "log10",
-    labels = scales::label_number(
-      scale_cut = scales::cut_long_scale()
-    )
-  ) +
-  scale_y_continuous(
-    breaks = c(0.01, 0.1, 1, 10, 60, 300),
-    transform = "log10",
-    labels = scales::label_timespan()
-  ) +
-  scale_color_manual(
-    values = color_switch
-  ) +
-  labs(
-    x = "Number of Observations",
-    y = "Mean Estimation Time",
-    color = NULL
-  ) +
-  custom_theme(legend = "bottom"))
+# ## Multiple vcov ----
+# (plot_ols_multiple_vcov <- bench_ols_multiple_vcov |>
+#   _[,
+#     .(
+#       mean_time = mean(time, na.rm = TRUE),
+#       n_failures = sum(is.na(time))
+#     ),
+#     by = setdiff(names(bench_ols_multiple_vcov), c("iter", "time"))
+#   ] |>
+#   ggplot() +
+#   geom_point(
+#     aes(
+#       x = n_obs,
+#       y = mean_time,
+#       color = est_name
+#     ),
+#     size = 2,
+#     shape = 15
+#   ) +
+#   geom_line(
+#     aes(
+#       x = n_obs,
+#       y = mean_time,
+#       color = est_name
+#     ),
+#     linewidth = 1.15
+#   ) +
+#   scale_x_continuous(
+#     transform = "log10",
+#     labels = scales::label_number(
+#       scale_cut = scales::cut_long_scale()
+#     )
+#   ) +
+#   scale_y_continuous(
+#     breaks = c(0.01, 0.1, 1, 10, 60, 300),
+#     transform = "log10",
+#     labels = scales::label_timespan()
+#   ) +
+#   scale_color_manual(
+#     values = color_switch
+#   ) +
+#   labs(
+#     x = "Number of Observations",
+#     y = "Mean Estimation Time",
+#     color = NULL
+#   ) +
+#   custom_theme(legend = "bottom"))
 
 # Export ----
 ggsave(

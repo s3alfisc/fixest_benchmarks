@@ -6,23 +6,17 @@ default:
 install-r:
     Rscript -e 'renv::restore()'
 
-# Install Python packages (pyfixest from source)
+# Install Python packages using uv
 install-python:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Install pixi if not present
-    if ! command -v pixi &> /dev/null; then
-        curl -fsSL https://pixi.sh/install.sh | bash
-        export PATH="$HOME/.pixi/bin:$PATH"
+    # Install uv if not present
+    if ! command -v uv &> /dev/null; then
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH="$HOME/.local/bin:$PATH"
     fi
-    # Clone pyfixest from PR branch if not present
-    if [ ! -d "pyfixest" ]; then
-        git clone --branch feature/demean-accelerated --single-branch https://github.com/schroedk/pyfixest.git
-    fi
-    # Build pyfixest with pixi
-    cd pyfixest && pixi install -e dev && pixi run -e dev maturin-develop
-    # Install additional benchmark dependencies (linearmodels, statsmodels, formulaic)
-    cd pyfixest && pixi run -e dev pip install linearmodels statsmodels formulaic
+    # Sync dependencies (creates .venv and uv.lock)
+    uv sync
 
 # Install Julia packages via Pkg
 install-julia:

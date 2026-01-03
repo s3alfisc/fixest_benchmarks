@@ -1,10 +1,10 @@
 # Pyfixest timer functions using CSV + subprocess (no reticulate)
 
-# Use pixi's Python environment (pyfixest built from source)
-.pyfixest_python_path <- here::here("pyfixest", ".pixi", "envs", "dev", "bin", "python")
+# Use local virtual environment
+.pyfixest_python_path <- here::here(".venv", "bin", "python")
 .pyfixest_cli_path <- here::here("timers", "pyfixest_cli.py")
 
-.run_pyfixest_timer <- function(df, formula, method = "feols", backend = "rust", timeout = 300L) {
+.run_pyfixest_timer <- function(df, formula, method = "feols", backend = "rust", timeout = 10L) {
   # Write data to temp CSV
   tmp_csv <- tempfile(fileext = ".csv")
   on.exit(unlink(tmp_csv), add = TRUE)
@@ -24,8 +24,8 @@
 
   result <- system(cmd, intern = TRUE)
 
-  # Check for OOM or TIMEOUT sentinel values
-  if (length(result) == 0 || result %in% c("OOM", "TIMEOUT")) {
+  # Check for OOM, TIMEOUT, or NUMERICAL_ERROR sentinel values
+  if (length(result) == 0 || result %in% c("OOM", "TIMEOUT", "NUMERICAL_ERROR")) {
     return(NA_real_)
   }
 
