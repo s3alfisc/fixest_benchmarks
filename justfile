@@ -21,6 +21,8 @@ install-python:
     fi
     # Build pyfixest with pixi
     cd pyfixest && pixi install -e dev && pixi run -e dev maturin-develop
+    # Install additional benchmark dependencies (linearmodels, statsmodels, formulaic)
+    cd pyfixest && pixi run -e dev pip install linearmodels statsmodels formulaic
 
 # Install Julia packages via Pkg
 install-julia:

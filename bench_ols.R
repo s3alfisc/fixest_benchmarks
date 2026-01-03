@@ -46,6 +46,12 @@ bench_ols_small <- run_benchmark(
     "fixest::feols", 2L, list(\(df) {
       feols_timer(df, y ~ x1 | indiv_id + year)
     }),
+    "linearmodels.AbsorbingLS", 2L, list(\(df) {
+      absorbingls_timer(df, "y ~ x1 | indiv_id + year")
+    }),
+    "statsmodels.OLS", 2L, list(\(df) {
+      statsmodels_ols_timer(df, "y ~ x1 | indiv_id + year")
+    }),
     "pyfixest.feols (rust)", 3L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust")
     }),
@@ -69,6 +75,12 @@ bench_ols_small <- run_benchmark(
     }),
     "fixest::feols", 3L, list(\(df) {
       feols_timer(df, y ~ x1 | indiv_id + year + firm_id)
+    }),
+    "linearmodels.AbsorbingLS", 3L, list(\(df) {
+      absorbingls_timer(df, "y ~ x1 | indiv_id + year + firm_id")
+    }),
+    "statsmodels.OLS", 3L, list(\(df) {
+      statsmodels_ols_timer(df, "y ~ x1 | indiv_id + year + firm_id")
     })
   )
 )
@@ -105,6 +117,12 @@ bench_ols_medium <- run_benchmark(
     "fixest::feols", 2L, list(\(df) {
       feols_timer(df, y ~ x1 | indiv_id + year)
     }),
+    "linearmodels.AbsorbingLS", 2L, list(\(df) {
+      absorbingls_timer(df, "y ~ x1 | indiv_id + year")
+    }),
+    "statsmodels.OLS", 2L, list(\(df) {
+      statsmodels_ols_timer(df, "y ~ x1 | indiv_id + year")
+    }),
     "pyfixest.feols (rust)", 3L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust")
     }),
@@ -128,6 +146,12 @@ bench_ols_medium <- run_benchmark(
     }),
     "fixest::feols", 3L, list(\(df) {
       feols_timer(df, y ~ x1 | indiv_id + year + firm_id)
+    }),
+    "linearmodels.AbsorbingLS", 3L, list(\(df) {
+      absorbingls_timer(df, "y ~ x1 | indiv_id + year + firm_id")
+    }),
+    "statsmodels.OLS", 3L, list(\(df) {
+      statsmodels_ols_timer(df, "y ~ x1 | indiv_id + year + firm_id")
     })
   )
 )
@@ -164,6 +188,12 @@ bench_ols_large <- run_benchmark(
     "fixest::feols", 2L, list(\(df) {
       feols_timer(df, y ~ x1 | indiv_id + year)
     }),
+    "linearmodels.AbsorbingLS", 2L, list(\(df) {
+      absorbingls_timer(df, "y ~ x1 | indiv_id + year")
+    }),
+    "statsmodels.OLS", 2L, list(\(df) {
+      statsmodels_ols_timer(df, "y ~ x1 | indiv_id + year")
+    }),
     "pyfixest.feols (rust)", 3L, list(\(df) {
       pyfixest_feols_timer(df, "y ~ x1 | indiv_id + year + firm_id", backend = "rust")
     }),
@@ -187,6 +217,12 @@ bench_ols_large <- run_benchmark(
     }),
     "fixest::feols", 3L, list(\(df) {
       feols_timer(df, y ~ x1 | indiv_id + year + firm_id)
+    }),
+    "linearmodels.AbsorbingLS", 3L, list(\(df) {
+      absorbingls_timer(df, "y ~ x1 | indiv_id + year + firm_id")
+    }),
+    "statsmodels.OLS", 3L, list(\(df) {
+      statsmodels_ols_timer(df, "y ~ x1 | indiv_id + year + firm_id")
     })
   )
 )

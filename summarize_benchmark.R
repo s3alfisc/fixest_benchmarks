@@ -276,7 +276,9 @@ color_switch <- c(
   "GLFixedEffectModels Poisson" = "#0188AC",
   "lfe::felm" = "#ffc517",
   "alpaca Poisson" = "#ffc517",
-  "alpaca logit" = "#ffc517"
+  "alpaca logit" = "#ffc517",
+  "linearmodels.AbsorbingLS" = "#E57373",
+  "statsmodels.OLS" = "#9C27B0"
 )
 
 dgp_labels <- c(
@@ -351,7 +353,8 @@ summ_ols <- bench_ols |>
   labs(
     x = "Number of Observations",
     y = "Mean Estimation Time",
-    color = NULL
+    color = NULL,
+    caption = "Missing points indicate OOM errors or timeouts (>5 min)"
   ) +
   custom_theme(legend = "bottom"))
 
