@@ -10,4 +10,5 @@ dependencies = [
     "statsmodels",
     "formulaic",
     "pandas",
+    "pyarrow",
 ]

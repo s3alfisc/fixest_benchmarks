@@ -1,5 +1,5 @@
 **/.DS_Store
-data/nyc_taxi.parquet
+*.parquet
 data/Medicare_Provider_Util_Payment_PUF_CY2016.txt
 # pixi environments
 .pixi/*

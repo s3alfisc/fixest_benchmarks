@@ -12,8 +12,8 @@ source("timers/alpaca.R")
 options(lfe.threads = 8)
 setFixest_nthreads(8)
 
-# setup python (via CSV + subprocess, no reticulate)
-source("timers/pyfixest.R")
+# NOTE: Python benchmarks now run in isolated scripts (scripts/bench_python.py)
+# The old pyfixest.R timer has been removed in favor of the new architecture
 
 # setup julia
 # This chaos is due to: https://github.com/JuliaInterop/JuliaCall/issues/238

@@ -9,11 +9,10 @@ complexity. These benchmarks are scheduled to run weekly on Github
 Actions, and the updated results are stored in the `results` directory.
 
 If you would like to contribute to the benchmarks or add alternative
-estimators, PRs are welcome. The code `bench.R` is easily adaptable to
-include additional estimators. Simply add a timer function to `timers.R`
-that returns the time taken to estimate a model using your preferred
-package. Then add your estimator to the `bench.R` file and submit a PR
-for review.
+estimators, PRs are welcome. The benchmark scripts are organized by language:
+- `scripts/bench_python.py` - Python estimators (pyfixest, linearmodels, statsmodels)
+- `scripts/bench_r.R` - R estimators (fixest, lfe)
+- `scripts/bench_julia.jl` - Julia estimators (FixedEffectModels)
 
 > [!CAUTION]
 >
@@ -52,17 +51,24 @@ This runs:
 
 ### Running Benchmarks
 
+The benchmarks use an isolated architecture where each language runs in its own
+process. This ensures fair comparisons and allows JIT compilation (e.g., numba)
+to persist across iterations.
+
 ```bash
-# Run all simulated data benchmarks
-just bench-all
+# Generate benchmark data (parquet files shared by all languages)
+just generate-data
 
-# Run individual benchmarks
-just bench-ols
-just bench-poisson
-just bench-logit
+# Run complete benchmark pipelines (generates data + all languages + combines)
+just bench-ols          # OLS benchmarks
+just bench-poisson      # Poisson benchmarks
+just bench-logit        # Logit benchmarks
+just bench-all          # All benchmarks
 
-# Download real datasets and run all benchmarks
-just run-all
+# Run individual language benchmarks (after generate-data)
+just bench-python-ols   # Python only
+just bench-r-ols        # R only
+just bench-julia-ols    # Julia only
 
 # Generate summary plots and tables
 just summarize
