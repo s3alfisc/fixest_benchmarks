@@ -17,6 +17,7 @@ args <- commandArgs(trailingOnly = TRUE)
 benchmark_type <- if (length(args) >= 1) args[1] else "ols"
 data_dir <- if (length(args) >= 2) args[2] else here("data", "benchmark")
 output_file <- if (length(args) >= 3) args[3] else here("results", "bench_r.csv")
+filter_pattern <- if (length(args) >= 4) args[4] else NULL
 
 # Timer functions
 feols_timer <- function(data, fml, nthreads = N_THREADS) {
@@ -99,7 +100,7 @@ parse_dataset_name <- function(name) {
 }
 
 # Main benchmark function
-run_benchmark <- function(data_dir, output_file, benchmark_type) {
+run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern = NULL) {
   config <- get_estimators(benchmark_type)
 
   # Get all parquet files
@@ -119,6 +120,11 @@ run_benchmark <- function(data_dir, output_file, benchmark_type) {
     iter_type <- parts[n_parts - 1]
     iter_num <- as.integer(parts[n_parts])
 
+    # Apply filter if specified
+    if (!is.null(filter_pattern) && !grepl(filter_pattern, ds_name)) {
+      next
+    }
+
     if (is.null(datasets[[ds_name]])) {
       datasets[[ds_name]] <- list()
     }
@@ -135,8 +141,9 @@ run_benchmark <- function(data_dir, output_file, benchmark_type) {
   cat("================================================================================\n")
   cat(sprintf("R BENCHMARK: %s\n", toupper(benchmark_type)))
   cat("================================================================================\n")
-  cat(sprintf("Estimators: %d | FE configs: %d | Threads: %d\n",
-              length(config$estimators), length(config$formulas), N_THREADS))
+  filter_info <- if (!is.null(filter_pattern)) sprintf(" | Filter: '%s'", filter_pattern) else ""
+  cat(sprintf("Estimators: %d | FE configs: %d | Threads: %d%s\n",
+              length(config$estimators), length(config$formulas), N_THREADS, filter_info))
 
   for (ds_name in sort(names(datasets))) {
     parsed <- parse_dataset_name(ds_name)
@@ -221,4 +228,4 @@ run_benchmark <- function(data_dir, output_file, benchmark_type) {
 }
 
 # Run benchmark
-run_benchmark(data_dir, output_file, benchmark_type)
+run_benchmark(data_dir, output_file, benchmark_type, filter_pattern)

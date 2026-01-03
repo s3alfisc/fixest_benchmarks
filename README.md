@@ -74,6 +74,18 @@ just bench-julia-ols    # Julia only
 just summarize
 ```
 
+#### Filtering Datasets
+
+All benchmark commands support an optional filter to run only specific datasets.
+For example, to run only "simple" datasets (excluding "difficult"):
+
+```bash
+# Filter by dataset name pattern
+just bench-ols simple           # Only simple datasets
+just bench-python-ols simple    # Python only, simple datasets
+just bench-all simple           # All benchmarks, simple datasets only
+```
+
 Run `just` to see all available commands.
 
 ## Simulation DGP

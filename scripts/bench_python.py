@@ -2,11 +2,12 @@
 """
 Python benchmark runner for fixed-effect estimation.
 Runs in a single persistent process so numba JIT compilation persists across iterations.
+Uses multiprocessing for proper timeout of slow estimators (statsmodels, linearmodels).
 """
 
 import argparse
 import csv
-import signal
+import multiprocessing as mp
 import sys
 import time
 from collections import defaultdict
@@ -15,13 +16,9 @@ from pathlib import Path
 import pandas as pd
 
 
-class TimeoutError(Exception):
-    pass
-
-
-def timeout_handler(signum, frame):
-    raise TimeoutError("Estimation timed out")
-
+# =============================================================================
+# Estimator functions (run in main process for JIT caching)
+# =============================================================================
 
 def run_pyfixest_feols(data: pd.DataFrame, formula: str, backend: str) -> float:
     """Run pyfixest feols and return timing."""
@@ -96,14 +93,60 @@ def run_statsmodels_ols(data: pd.DataFrame, formula: str) -> float:
     return time.perf_counter() - start
 
 
+# =============================================================================
+# Subprocess wrapper for timeout support
+# =============================================================================
+
+def _run_in_subprocess(func_name: str, data_path: str, formula: str, result_queue: mp.Queue):
+    """Worker function that runs in subprocess."""
+    try:
+        data = pd.read_parquet(data_path)
+        if func_name == "absorbingls":
+            elapsed = run_absorbingls(data, formula)
+        elif func_name == "statsmodels_ols":
+            elapsed = run_statsmodels_ols(data, formula)
+        else:
+            raise ValueError(f"Unknown function: {func_name}")
+        result_queue.put(("success", elapsed))
+    except MemoryError:
+        result_queue.put(("oom", None))
+    except Exception as e:
+        result_queue.put(("error", str(e)))
+
+
+def run_with_timeout(func_name: str, data_path: str, formula: str, timeout: int) -> tuple[str, float | None]:
+    """Run a function in subprocess with timeout. Returns (status, elapsed_time)."""
+    result_queue = mp.Queue()
+    proc = mp.Process(target=_run_in_subprocess, args=(func_name, data_path, formula, result_queue))
+    proc.start()
+    proc.join(timeout=timeout)
+
+    if proc.is_alive():
+        proc.terminate()
+        proc.join(timeout=5)
+        if proc.is_alive():
+            proc.kill()
+            proc.join()
+        return ("timeout", None)
+
+    if result_queue.empty():
+        return ("error", None)
+
+    return result_queue.get()
+
+
+# =============================================================================
+# Benchmark configuration
+# =============================================================================
+
 def get_estimators(benchmark_type: str) -> list[tuple]:
     """Get estimators and formulas for benchmark type."""
     if benchmark_type == "ols":
         estimators = [
-            ("pyfixest.feols (rust)", "rust", run_pyfixest_feols),
-            ("pyfixest.feols (numba)", "numba", run_pyfixest_feols),
-            ("linearmodels.AbsorbingLS", None, run_absorbingls),
-            ("statsmodels.OLS", None, run_statsmodels_ols),
+            ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False),
+            ("pyfixest.feols (numba)", "numba", run_pyfixest_feols, False),
+            ("linearmodels.AbsorbingLS", "absorbingls", None, True),
+            ("statsmodels.OLS", "statsmodels_ols", None, True),
         ]
         formulas = {
             2: "y ~ x1 | indiv_id + year",
@@ -111,8 +154,8 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
         }
     elif benchmark_type == "poisson":
         estimators = [
-            ("pyfixest.fepois (rust)", "rust", run_pyfixest_fepois),
-            ("pyfixest.fepois (numba)", "numba", run_pyfixest_fepois),
+            ("pyfixest.fepois (rust)", "rust", run_pyfixest_fepois, False),
+            ("pyfixest.fepois (numba)", "numba", run_pyfixest_fepois, False),
         ]
         formulas = {
             2: "negbin_y ~ x1 | indiv_id + year",
@@ -120,8 +163,8 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
         }
     elif benchmark_type == "logit":
         estimators = [
-            ("pyfixest.feglm_logit (rust)", "rust", run_pyfixest_feglm_logit),
-            ("pyfixest.feglm_logit (numba)", "numba", run_pyfixest_feglm_logit),
+            ("pyfixest.feglm_logit (rust)", "rust", run_pyfixest_feglm_logit, False),
+            ("pyfixest.feglm_logit (numba)", "numba", run_pyfixest_feglm_logit, False),
         ]
         formulas = {
             2: "binary_y ~ x1 | indiv_id + year",
@@ -150,11 +193,16 @@ def parse_dataset_name(name: str) -> tuple[str, int]:
     return dgp_type, n_obs
 
 
+# =============================================================================
+# Main benchmark runner
+# =============================================================================
+
 def run_benchmark(
     data_dir: Path,
     output_file: Path,
     benchmark_type: str,
     timeout: int = 60,
+    filter_pattern: str | None = None,
 ) -> None:
     """Run benchmarks on all datasets in data_dir."""
     estimators, formulas = get_estimators(benchmark_type)
@@ -174,6 +222,9 @@ def run_benchmark(
             ds_name = parts[0]
             iter_type = parts[1]
             iter_num = int(parts[2])
+            # Apply filter if specified
+            if filter_pattern and filter_pattern not in ds_name:
+                continue
             datasets[ds_name].append((iter_type, iter_num, f))
 
     results = []
@@ -181,10 +232,8 @@ def run_benchmark(
     print("\n" + "=" * 80)
     print(f"PYTHON BENCHMARK: {benchmark_type.upper()}")
     print("=" * 80)
-    print(f"Estimators: {len(estimators)} | FE configs: {len(formulas)} | Timeout: {timeout}s")
-
-    # Set up timeout handler
-    signal.signal(signal.SIGALRM, timeout_handler)
+    filter_info = f" | Filter: '{filter_pattern}'" if filter_pattern else ""
+    print(f"Estimators: {len(estimators)} | FE configs: {len(formulas)} | Timeout: {timeout}s{filter_info}")
 
     for ds_name, files in sorted(datasets.items()):
         dgp_type, n_obs = parse_dataset_name(ds_name)
@@ -201,20 +250,30 @@ def run_benchmark(
             data = pd.read_parquet(filepath)
 
             for n_fe, formula in formulas.items():
-                for est_name, backend, func in estimators:
+                for est_name, backend_or_func, func, use_subprocess in estimators:
                     print(f"  -> {est_name:<35} (FE={n_fe}) ... ", end="", flush=True)
 
-                    # Set timeout alarm
-                    signal.alarm(timeout)
-
                     try:
-                        if backend:
-                            elapsed = func(data, formula, backend)
+                        if use_subprocess:
+                            # Run in subprocess with proper timeout (for statsmodels, linearmodels)
+                            status, elapsed = run_with_timeout(
+                                backend_or_func, str(filepath), formula, timeout
+                            )
+                            if status == "timeout":
+                                print("TIMEOUT")
+                                elapsed = None
+                            elif status == "oom":
+                                print("OOM")
+                                elapsed = None
+                            elif status == "error":
+                                print(f"ERROR: {elapsed}")
+                                elapsed = None
+                            else:
+                                print(f"{elapsed:.3f}s")
                         else:
-                            elapsed = func(data, formula)
-
-                        signal.alarm(0)  # Cancel alarm
-                        print(f"{elapsed:.3f}s")
+                            # Run in main process (for pyfixest - JIT caching)
+                            elapsed = func(data, formula, backend_or_func)
+                            print(f"{elapsed:.3f}s")
 
                         # Only record non-burnin iterations
                         if iter_type != "burnin":
@@ -227,21 +286,7 @@ def run_benchmark(
                                 "n_obs": n_obs,
                             })
 
-                    except TimeoutError:
-                        signal.alarm(0)
-                        print("TIMEOUT")
-                        if iter_type != "burnin":
-                            results.append({
-                                "iter": iter_num,
-                                "time": None,
-                                "est_name": est_name,
-                                "n_fe": n_fe,
-                                "dgp_name": dgp_type,
-                                "n_obs": n_obs,
-                            })
-
                     except MemoryError:
-                        signal.alarm(0)
                         print("OOM")
                         if iter_type != "burnin":
                             results.append({
@@ -254,7 +299,6 @@ def run_benchmark(
                             })
 
                     except Exception as e:
-                        signal.alarm(0)
                         error_msg = str(e).lower()
                         if any(x in error_msg for x in ["svd", "singular", "convergence"]):
                             print("NUMERICAL_ERROR")
@@ -287,6 +331,9 @@ def run_benchmark(
 
 
 def main():
+    # Required for multiprocessing on macOS
+    mp.set_start_method("spawn", force=True)
+
     parser = argparse.ArgumentParser(description="Run Python fixed-effect benchmarks")
     parser.add_argument(
         "--data-dir",
@@ -312,9 +359,15 @@ def main():
         default=60,
         help="Timeout per estimation in seconds (default: 60)",
     )
+    parser.add_argument(
+        "--filter",
+        type=str,
+        default=None,
+        help="Filter datasets by name (e.g., 'simple' to exclude 'difficult')",
+    )
     args = parser.parse_args()
 
-    run_benchmark(args.data_dir, args.output, args.type, args.timeout)
+    run_benchmark(args.data_dir, args.output, args.type, args.timeout, args.filter)
 
 
 if __name__ == "__main__":

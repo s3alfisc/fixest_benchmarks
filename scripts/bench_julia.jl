@@ -85,7 +85,7 @@ function get_config(benchmark_type::String)
     return estimators, formulas
 end
 
-function run_benchmark(data_dir::String, output_file::String, benchmark_type::String)
+function run_benchmark(data_dir::String, output_file::String, benchmark_type::String, filter_pattern::Union{String, Nothing}=nothing)
     estimators, formulas = get_config(benchmark_type)
 
     # Get all parquet files
@@ -103,6 +103,11 @@ function run_benchmark(data_dir::String, output_file::String, benchmark_type::St
         ds_name = join(parts[1:n_parts-2], "_")
         iter_type = parts[n_parts-1]
         iter_num = parse(Int, parts[n_parts])
+
+        # Apply filter if specified
+        if filter_pattern !== nothing && !occursin(filter_pattern, ds_name)
+            continue
+        end
 
         if !haskey(datasets, ds_name)
             datasets[ds_name] = []
@@ -123,7 +128,8 @@ function run_benchmark(data_dir::String, output_file::String, benchmark_type::St
     println("=" ^ 80)
     println("JULIA BENCHMARK: $(uppercase(benchmark_type))")
     println("=" ^ 80)
-    println("Estimators: $(length(estimators)) | FE configs: $(length(formulas)) | Threads: $N_THREADS")
+    filter_info = filter_pattern !== nothing ? " | Filter: '$(filter_pattern)'" : ""
+    println("Estimators: $(length(estimators)) | FE configs: $(length(formulas)) | Threads: $N_THREADS$filter_info")
 
     for ds_name in sort(collect(keys(datasets)))
         dgp_type, n_obs = parse_dataset_name(ds_name)
@@ -199,8 +205,9 @@ function main()
     benchmark_type = length(ARGS) >= 1 ? ARGS[1] : "ols"
     data_dir = length(ARGS) >= 2 ? ARGS[2] : "data/benchmark"
     output_file = length(ARGS) >= 3 ? ARGS[3] : "results/bench_julia.csv"
+    filter_pattern = length(ARGS) >= 4 ? ARGS[4] : nothing
 
-    run_benchmark(data_dir, output_file, benchmark_type)
+    run_benchmark(data_dir, output_file, benchmark_type, filter_pattern)
 end
 
 main()
