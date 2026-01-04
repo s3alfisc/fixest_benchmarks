@@ -13,6 +13,28 @@ using FixedEffectModels
 using GLFixedEffectModels
 
 const N_THREADS = 8
+const TIMEOUT_SECS = 60
+
+# Timeout wrapper function
+function with_timeout(f::Function, timeout::Int)
+    task = @async f()
+    timer = Timer(timeout)
+
+    while !istaskdone(task) && isopen(timer)
+        sleep(0.1)
+    end
+
+    if istaskdone(task)
+        close(timer)
+        return fetch(task)
+    else
+        # Timeout occurred
+        close(timer)
+        # Try to kill the task (best effort)
+        Base.schedule(task, InterruptException(); error=true)
+        throw(ErrorException("Timeout after $timeout seconds"))
+    end
+end
 
 # Timer functions
 function feols_timer(data::DataFrame, formula_str::String; nthreads::Int=N_THREADS)
@@ -155,13 +177,21 @@ function run_benchmark(data_dir::String, output_file::String, benchmark_type::St
                     flush(stdout)
 
                     elapsed = try
-                        func(data, formula)
+                        with_timeout(TIMEOUT_SECS) do
+                            func(data, formula)
+                        end
                     catch e
-                        missing
+                        if occursin("Timeout", string(e))
+                            println("TIMEOUT")
+                            missing
+                        else
+                            println("ERROR: $(string(e))")
+                            missing
+                        end
                     end
 
                     if ismissing(elapsed)
-                        println("FAILED")
+                        # Already printed error/timeout message
                     else
                         println("$(round(elapsed, digits=3))s")
                     end

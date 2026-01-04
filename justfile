@@ -2,6 +2,10 @@
 default:
     @just --list
 
+# Show system information (CPU, RAM, versions)
+system-info:
+    Rscript scripts/system_info.R
+
 # Install R packages via renv
 install-r:
     Rscript -e 'renv::restore()'
@@ -15,8 +19,22 @@ install-python:
         curl -LsSf https://astral.sh/uv/install.sh | sh
         export PATH="$HOME/.local/bin:$PATH"
     fi
-    # Sync dependencies (creates .venv and uv.lock)
+    # Install pixi if not present
+    if ! command -v pixi &> /dev/null; then
+        curl -fsSL https://pixi.sh/install.sh | bash
+        export PATH="$HOME/.pixi/bin:$PATH"
+    fi
+    # Clone pyfixest from PR branch if not present
+    if [ ! -d "pyfixest" ]; then
+        git clone --branch feature/demean-accelerated --single-branch \
+            https://github.com/schroedk/pyfixest.git pyfixest
+    fi
+    # Sync other dependencies first (creates .venv)
     uv sync
+    # Build pyfixest Rust extension using pixi
+    cd pyfixest && pixi run maturin-develop && cd ..
+    # Install pyfixest into uv environment
+    uv pip install -e ./pyfixest
 
 # Install Julia packages via Pkg
 install-julia:
@@ -105,6 +123,9 @@ bench-logit filter="": generate-data (bench-python-logit filter) (bench-r-logit 
 
 # Run all simulated data benchmarks
 bench-all filter="": (bench-ols filter) (bench-poisson filter) (bench-logit filter)
+
+# Combine all results from all languages
+combine-all: combine-ols combine-poisson combine-logit
 
 # Full benchmark run (generate data, run all benchmarks)
 run-all filter="": generate-data (bench-all filter)

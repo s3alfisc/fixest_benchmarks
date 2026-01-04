@@ -97,7 +97,7 @@ def run_statsmodels_ols(data: pd.DataFrame, formula: str) -> float:
 # Subprocess wrapper for timeout support
 # =============================================================================
 
-def _run_in_subprocess(func_name: str, data_path: str, formula: str, result_queue: mp.Queue):
+def _run_in_subprocess(func_name: str, data_path: str, formula: str, result_queue: mp.Queue, backend: str = None):
     """Worker function that runs in subprocess."""
     try:
         data = pd.read_parquet(data_path)
@@ -105,6 +105,12 @@ def _run_in_subprocess(func_name: str, data_path: str, formula: str, result_queu
             elapsed = run_absorbingls(data, formula)
         elif func_name == "statsmodels_ols":
             elapsed = run_statsmodels_ols(data, formula)
+        elif func_name == "pyfixest_feols":
+            elapsed = run_pyfixest_feols(data, formula, backend)
+        elif func_name == "pyfixest_fepois":
+            elapsed = run_pyfixest_fepois(data, formula, backend)
+        elif func_name == "pyfixest_feglm_logit":
+            elapsed = run_pyfixest_feglm_logit(data, formula, backend)
         else:
             raise ValueError(f"Unknown function: {func_name}")
         result_queue.put(("success", elapsed))
@@ -114,10 +120,10 @@ def _run_in_subprocess(func_name: str, data_path: str, formula: str, result_queu
         result_queue.put(("error", str(e)))
 
 
-def run_with_timeout(func_name: str, data_path: str, formula: str, timeout: int) -> tuple[str, float | None]:
+def run_with_timeout(func_name: str, data_path: str, formula: str, timeout: int, backend: str = None) -> tuple[str, float | None]:
     """Run a function in subprocess with timeout. Returns (status, elapsed_time)."""
     result_queue = mp.Queue()
-    proc = mp.Process(target=_run_in_subprocess, args=(func_name, data_path, formula, result_queue))
+    proc = mp.Process(target=_run_in_subprocess, args=(func_name, data_path, formula, result_queue, backend))
     proc.start()
     proc.join(timeout=timeout)
 
@@ -140,13 +146,16 @@ def run_with_timeout(func_name: str, data_path: str, formula: str, timeout: int)
 # =============================================================================
 
 def get_estimators(benchmark_type: str) -> list[tuple]:
-    """Get estimators and formulas for benchmark type."""
+    """Get estimators and formulas for benchmark type.
+
+    Returns: list of (name, backend/func_str, func, use_subprocess, func_name_for_subprocess)
+    """
     if benchmark_type == "ols":
         estimators = [
-            ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False),
-            ("pyfixest.feols (numba)", "numba", run_pyfixest_feols, False),
-            ("linearmodels.AbsorbingLS", "absorbingls", None, True),
-            ("statsmodels.OLS", "statsmodels_ols", None, True),
+            ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False, "pyfixest_feols"),
+            ("pyfixest.feols (numba)", "numba", run_pyfixest_feols, False, "pyfixest_feols"),
+            ("linearmodels.AbsorbingLS", "absorbingls", None, True, "absorbingls"),
+            ("statsmodels.OLS", "statsmodels_ols", None, True, "statsmodels_ols"),
         ]
         formulas = {
             2: "y ~ x1 | indiv_id + year",
@@ -154,8 +163,8 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
         }
     elif benchmark_type == "poisson":
         estimators = [
-            ("pyfixest.fepois (rust)", "rust", run_pyfixest_fepois, False),
-            ("pyfixest.fepois (numba)", "numba", run_pyfixest_fepois, False),
+            ("pyfixest.fepois (rust)", "rust", run_pyfixest_fepois, False, "pyfixest_fepois"),
+            ("pyfixest.fepois (numba)", "numba", run_pyfixest_fepois, False, "pyfixest_fepois"),
         ]
         formulas = {
             2: "negbin_y ~ x1 | indiv_id + year",
@@ -163,8 +172,8 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
         }
     elif benchmark_type == "logit":
         estimators = [
-            ("pyfixest.feglm_logit (rust)", "rust", run_pyfixest_feglm_logit, False),
-            ("pyfixest.feglm_logit (numba)", "numba", run_pyfixest_feglm_logit, False),
+            ("pyfixest.feglm_logit (rust)", "rust", run_pyfixest_feglm_logit, False, "pyfixest_feglm_logit"),
+            ("pyfixest.feglm_logit (numba)", "numba", run_pyfixest_feglm_logit, False, "pyfixest_feglm_logit"),
         ]
         formulas = {
             2: "binary_y ~ x1 | indiv_id + year",
@@ -250,14 +259,17 @@ def run_benchmark(
             data = pd.read_parquet(filepath)
 
             for n_fe, formula in formulas.items():
-                for est_name, backend_or_func, func, use_subprocess in estimators:
+                for est_name, backend_or_func, func, use_subprocess, func_name_subprocess in estimators:
                     print(f"  -> {est_name:<35} (FE={n_fe}) ... ", end="", flush=True)
 
+                    # Use subprocess timeout for difficult datasets with 3 FEs or large sample sizes
+                    use_timeout = use_subprocess or (dgp_type == "difficult" and (n_fe >= 3 or n_obs >= 1_000_000))
+
                     try:
-                        if use_subprocess:
-                            # Run in subprocess with proper timeout (for statsmodels, linearmodels)
+                        if use_timeout:
+                            # Run in subprocess with proper timeout
                             status, elapsed = run_with_timeout(
-                                backend_or_func, str(filepath), formula, timeout
+                                func_name_subprocess, str(filepath), formula, timeout, backend_or_func if not use_subprocess else None
                             )
                             if status == "timeout":
                                 print("TIMEOUT")
@@ -271,7 +283,7 @@ def run_benchmark(
                             else:
                                 print(f"{elapsed:.3f}s")
                         else:
-                            # Run in main process (for pyfixest - JIT caching)
+                            # Run in main process (for pyfixest - JIT caching on simple datasets)
                             elapsed = func(data, formula, backend_or_func)
                             print(f"{elapsed:.3f}s")
 

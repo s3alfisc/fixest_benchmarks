@@ -5,10 +5,11 @@ description = "Benchmarks for fixed effects regression packages"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "pyfixest==0.40.1",
     "linearmodels",
     "statsmodels",
     "formulaic",
     "pandas",
     "pyarrow",
 ]
+
+# pyfixest is installed separately from local build (see install-python)

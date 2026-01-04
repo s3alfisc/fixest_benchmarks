@@ -59,7 +59,7 @@ to persist across iterations.
 # Generate benchmark data (parquet files shared by all languages)
 just generate-data
 
-# Run complete benchmark pipelines (generates data + all languages + combines)
+# Run complete benchmark pipelines (generates data + all languages + combines + plots)
 just bench-ols          # OLS benchmarks
 just bench-poisson      # Poisson benchmarks
 just bench-logit        # Logit benchmarks
@@ -70,9 +70,61 @@ just bench-python-ols   # Python only
 just bench-r-ols        # R only
 just bench-julia-ols    # Julia only
 
-# Generate summary plots and tables
-just summarize
+# Combine results and generate plots separately (if running languages individually)
+just combine-ols        # Merge Python/R/Julia OLS CSVs into results/bench_ols.csv
+just combine-all        # Combine all benchmark types (ols, poisson, logit)
+just summarize-ols      # Generate OLS plots from combined results
+just summarize          # Generate all plots
+
+# System information
+just system-info        # Show CPU, RAM, OS, and package versions
 ```
+
+> **Note:** When using `just bench-ols` or `just bench-all`, the combine and summarize
+> steps run automatically. You only need to run `just combine-*` manually if you're
+> running individual language benchmarks separately (e.g., `just bench-python-ols`).
+
+#### Benchmark Pipeline Architecture
+
+Each language runs in its own isolated process and outputs results to a separate CSV file:
+
+```
+generate-data
+    └─> data/benchmark/*.parquet
+
+bench-python-ols ─> results/bench_python_ols.csv
+bench-r-ols      ─> results/bench_r_ols.csv
+bench-julia-ols  ─> results/bench_julia_ols.csv
+
+combine-ols
+    └─> results/bench_ols.csv (merged from all languages)
+
+summarize-ols
+    └─> results/plot_ols.svg, results/plot_ols.pdf
+```
+
+This isolated architecture is important because:
+
+1. **JIT compilation persists** - Python's numba compiles once and reuses across all iterations within the same process
+2. **Fair comparison** - Each language runs independently without interference
+3. **Flexibility** - You can re-run a single language without affecting others
+4. **Debugging** - Easy to isolate issues to a specific language
+
+When running `just bench-ols` or `just bench-all`, all steps execute automatically.
+If you run individual language benchmarks separately, you must combine before summarizing:
+
+```bash
+# After running bench-python-ols, bench-r-ols, bench-julia-ols separately:
+just combine-ols        # Only combines OLS results
+just summarize-ols      # Only generates OLS plots
+
+# Or combine everything at once:
+just combine-all        # Combines ols + poisson + logit
+just summarize          # Generates all plots
+```
+
+Each combine command is independent - `combine-ols` only affects `bench_ols.csv`,
+not `bench_poisson.csv` or `bench_logit.csv`.
 
 #### Filtering Datasets
 
@@ -170,18 +222,4 @@ base_dgp <- function(
 
 ### Real Data
 
-<!-- Real Data -->
-| Dataset           | Num. obs. | Estimator             | Mean Estimation Time |
-|-------------------|-----------|-----------------------|----------------------|
-| tradepolicy (OLS) | 28566     | pyfixest.feols        | 0.233                |
-| tradepolicy (OLS) | 28566     | FixedEffectModels.reg | 0.125                |
-| tradepolicy (OLS) | 28566     | fixest::feols         | 0.045                |
-| nycflights13      | 336776    | pyfixest.feols        | 0.25                 |
-| nycflights13      | 336776    | FixedEffectModels.reg | 0.121                |
-| nycflights13      | 336776    | fixest::feols         | 0.107                |
-| Medicare Provider | 9714896   | FixedEffectModels.reg | 12.124               |
-| Medicare Provider | 9714896   | fixest::feols         | 32.196               |
-| nyc taxi          | 46099576  | pyfixest.feols        | 59.238               |
-| nyc taxi          | 46099576  | FixedEffectModels.reg | 21.502               |
-| nyc taxi          | 46099576  | fixest::feols         | 47.661               |
-<!-- Real Data -->
+tba
