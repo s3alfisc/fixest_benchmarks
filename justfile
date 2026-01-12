@@ -63,77 +63,131 @@ generate-data:
 
 # --- OLS Benchmarks (with optional filter, e.g., just bench-python-ols simple) ---
 
-# Run Python OLS benchmarks (optional filter: just bench-python-ols [filter])
-bench-python-ols filter="":
+# Run Python OLS benchmarks (optional filter, force=true to rerun)
+bench-python-ols filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_python_ols.csv" ]; then
+        echo "Skipping: results/bench_python_ols.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     uv run python scripts/bench_python.py --type ols --output results/bench_python_ols.csv {{ if filter != "" { "--filter " + filter } else { "" } }}
 
-# Run R OLS benchmarks (optional filter: just bench-r-ols [filter])
-bench-r-ols filter="":
+# Run R OLS benchmarks (optional filter, force=true to rerun)
+bench-r-ols filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_r_ols.csv" ]; then
+        echo "Skipping: results/bench_r_ols.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     Rscript scripts/bench_r.R ols data/benchmark results/bench_r_ols.csv {{ filter }}
 
-# Run Julia OLS benchmarks (optional filter: just bench-julia-ols [filter])
-bench-julia-ols filter="":
+# Run Julia OLS benchmarks (optional filter, force=true to rerun)
+bench-julia-ols filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_julia_ols.csv" ]; then
+        echo "Skipping: results/bench_julia_ols.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     julia -t 8 --project=. scripts/bench_julia.jl ols data/benchmark results/bench_julia_ols.csv {{ filter }}
 
 # Combine OLS results from all languages
 combine-ols:
     Rscript scripts/combine_results.R ols
 
-# Run complete OLS benchmark pipeline (optional filter)
-bench-ols filter="": generate-data (bench-python-ols filter) (bench-r-ols filter) (bench-julia-ols filter) combine-ols summarize-ols
+# Run complete OLS benchmark pipeline (optional filter, force=true to rerun)
+bench-ols filter="" force="false": generate-data (bench-python-ols filter force) (bench-r-ols filter force) (bench-julia-ols filter force) combine-ols summarize-ols
 
 # --- Poisson Benchmarks ---
 
-# Run Python Poisson benchmarks
-bench-python-poisson filter="":
+# Run Python Poisson benchmarks (optional filter, force=true to rerun)
+bench-python-poisson filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_python_poisson.csv" ]; then
+        echo "Skipping: results/bench_python_poisson.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     uv run python scripts/bench_python.py --type poisson --output results/bench_python_poisson.csv {{ if filter != "" { "--filter " + filter } else { "" } }}
 
-# Run R Poisson benchmarks
-bench-r-poisson filter="":
+# Run R Poisson benchmarks (optional filter, force=true to rerun)
+bench-r-poisson filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_r_poisson.csv" ]; then
+        echo "Skipping: results/bench_r_poisson.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     Rscript scripts/bench_r.R poisson data/benchmark results/bench_r_poisson.csv {{ filter }}
 
-# Run Julia Poisson benchmarks
-bench-julia-poisson filter="":
+# Run Julia Poisson benchmarks (optional filter, force=true to rerun)
+bench-julia-poisson filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_julia_poisson.csv" ]; then
+        echo "Skipping: results/bench_julia_poisson.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     julia -t 8 --project=. scripts/bench_julia.jl poisson data/benchmark results/bench_julia_poisson.csv {{ filter }}
 
 # Combine Poisson results
 combine-poisson:
     Rscript scripts/combine_results.R poisson
 
-# Run complete Poisson benchmark pipeline
-bench-poisson filter="": generate-data (bench-python-poisson filter) (bench-r-poisson filter) (bench-julia-poisson filter) combine-poisson summarize-poisson
+# Run complete Poisson benchmark pipeline (optional filter, force=true to rerun)
+bench-poisson filter="" force="false": generate-data (bench-python-poisson filter force) (bench-r-poisson filter force) (bench-julia-poisson filter force) combine-poisson summarize-poisson
 
 # --- Logit Benchmarks ---
 
-# Run Python Logit benchmarks
-bench-python-logit filter="":
+# Run Python Logit benchmarks (optional filter, force=true to rerun)
+bench-python-logit filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_python_logit.csv" ]; then
+        echo "Skipping: results/bench_python_logit.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     uv run python scripts/bench_python.py --type logit --output results/bench_python_logit.csv {{ if filter != "" { "--filter " + filter } else { "" } }}
 
-# Run R Logit benchmarks
-bench-r-logit filter="":
+# Run R Logit benchmarks (optional filter, force=true to rerun)
+bench-r-logit filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_r_logit.csv" ]; then
+        echo "Skipping: results/bench_r_logit.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     Rscript scripts/bench_r.R logit data/benchmark results/bench_r_logit.csv {{ filter }}
 
-# Run Julia Logit benchmarks
-bench-julia-logit filter="":
+# Run Julia Logit benchmarks (optional filter, force=true to rerun)
+bench-julia-logit filter="" force="false":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_julia_logit.csv" ]; then
+        echo "Skipping: results/bench_julia_logit.csv exists (use force=true to rerun)"
+        exit 0
+    fi
     julia -t 8 --project=. scripts/bench_julia.jl logit data/benchmark results/bench_julia_logit.csv {{ filter }}
 
 # Combine Logit results
 combine-logit:
     Rscript scripts/combine_results.R logit
 
-# Run complete Logit benchmark pipeline
-bench-logit filter="": generate-data (bench-python-logit filter) (bench-r-logit filter) (bench-julia-logit filter) combine-logit summarize-logit
+# Run complete Logit benchmark pipeline (optional filter, force=true to rerun)
+bench-logit filter="" force="false": generate-data (bench-python-logit filter force) (bench-r-logit filter force) (bench-julia-logit filter force) combine-logit summarize-logit
 
 # --- All Benchmarks ---
 
-# Run all simulated data benchmarks
-bench-all filter="": (bench-ols filter) (bench-poisson filter) (bench-logit filter)
+# Run all simulated data benchmarks (force=true to rerun existing)
+bench-all filter="" force="false": (bench-ols filter force) (bench-poisson filter force) (bench-logit filter force)
 
 # Combine all results from all languages
 combine-all: combine-ols combine-poisson combine-logit
 
-# Full benchmark run (generate data, run all benchmarks)
-run-all filter="": generate-data (bench-all filter)
+# Full benchmark run (generate data, run all benchmarks, force=true to rerun existing)
+run-all filter="" force="false": generate-data (bench-all filter force)
 
 # Summarize all benchmark results
 summarize:
