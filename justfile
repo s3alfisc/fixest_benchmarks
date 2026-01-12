@@ -24,15 +24,20 @@ install-python:
         curl -fsSL https://pixi.sh/install.sh | bash
         export PATH="$HOME/.pixi/bin:$PATH"
     fi
-    # Clone pyfixest from PR branch if not present
+    # Clone or update pyfixest from PR branch
     if [ ! -d "pyfixest" ]; then
         git clone --branch feature/demean-accelerated --single-branch \
             https://github.com/schroedk/pyfixest.git pyfixest
+    else
+        cd pyfixest
+        git fetch origin
+        git reset --hard origin/feature/demean-accelerated
+        cd ..
     fi
     # Sync other dependencies first (creates .venv)
     uv sync
-    # Build pyfixest Rust extension using pixi
-    cd pyfixest && pixi run maturin-develop && cd ..
+    # Build pyfixest Rust extension using pixi (unset conflicting env vars)
+    cd pyfixest && unset VIRTUAL_ENV CONDA_PREFIX && pixi run -e build maturin-develop && cd ..
     # Install pyfixest into uv environment
     uv pip install -e ./pyfixest
 
