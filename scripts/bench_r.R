@@ -5,6 +5,7 @@
 library(arrow)
 library(fixest)
 library(lfe)
+library(alpaca)
 library(here)
 library(R.utils)
 
@@ -46,6 +47,12 @@ lfe_timer <- function(data, fml) {
   as.numeric(Sys.time() - start_time, units = "secs")
 }
 
+alpaca_poisson_timer <- function(data, fml) {
+  start_time <- Sys.time()
+  result <- alpaca::feglm(fml, data = data, family = poisson())
+  as.numeric(Sys.time() - start_time, units = "secs")
+}
+
 # Define estimators and formulas by benchmark type
 get_estimators <- function(type) {
   if (type == "ols") {
@@ -62,11 +69,12 @@ get_estimators <- function(type) {
   } else if (type == "poisson") {
     list(
       estimators = list(
-        list(name = "fixest::fepois", func = fepois_timer)
+        list(name = "fixest::fepois", func = fepois_timer),
+        list(name = "alpaca::feglm", func = alpaca_poisson_timer)
       ),
       formulas = list(
-        list(n_fe = 2L, fixest = negbin_y ~ x1 | indiv_id + year),
-        list(n_fe = 3L, fixest = negbin_y ~ x1 | indiv_id + year + firm_id)
+        list(n_fe = 2L, fixest = negbin_y ~ x1 | indiv_id + year, alpaca = negbin_y ~ x1 | indiv_id + year),
+        list(n_fe = 3L, fixest = negbin_y ~ x1 | indiv_id + year + firm_id, alpaca = negbin_y ~ x1 | indiv_id + year + firm_id)
       )
     )
   } else if (type == "logit") {
@@ -181,6 +189,8 @@ run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern 
           # Get appropriate formula
           if (grepl("lfe", est_name)) {
             fml <- fml_config$lfe
+          } else if (grepl("alpaca", est_name)) {
+            fml <- fml_config$alpaca
           } else {
             fml <- fml_config$fixest
           }
