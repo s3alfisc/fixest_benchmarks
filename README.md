@@ -38,7 +38,7 @@ You need the following installed on your system:
 
 ### Installation
 
-Install all dependencies with:
+Install all other dependencies with:
 
 ```bash
 just setup
@@ -84,47 +84,16 @@ just system-info        # Show CPU, RAM, OS, and package versions
 > steps run automatically. You only need to run `just combine-*` manually if you're
 > running individual language benchmarks separately (e.g., `just bench-python-ols`).
 
-#### Benchmark Pipeline Architecture
+#### Caching
 
-Each language runs in its own isolated process and outputs results to a separate CSV file:
-
-```
-generate-data
-    └─> data/benchmark/*.parquet
-
-bench-python-ols ─> results/bench_python_ols.csv
-bench-r-ols      ─> results/bench_r_ols.csv
-bench-julia-ols  ─> results/bench_julia_ols.csv
-
-combine-ols
-    └─> results/bench_ols.csv (merged from all languages)
-
-summarize-ols
-    └─> results/plot_ols.svg, results/plot_ols.pdf
-```
-
-This isolated architecture is important because:
-
-1. **JIT compilation persists** - Python's numba compiles once and reuses across all iterations within the same process
-2. **Fair comparison** - Each language runs independently without interference
-3. **Flexibility** - You can re-run a single language without affecting others
-4. **Debugging** - Easy to isolate issues to a specific language
-
-When running `just bench-ols` or `just bench-all`, all steps execute automatically.
-If you run individual language benchmarks separately, you must combine before summarizing:
+By default, benchmark commands skip execution if their output CSV already exists.
+To force a rerun, set `force=true` or delete the associated CSV:
 
 ```bash
-# After running bench-python-ols, bench-r-ols, bench-julia-ols separately:
-just combine-ols        # Only combines OLS results
-just summarize-ols      # Only generates OLS plots
-
-# Or combine everything at once:
-just combine-all        # Combines ols + poisson + logit
-just summarize          # Generates all plots
+just force=true bench-ols           # Rerun OLS even if results exist
+just force=true bench-python-ols    # Rerun Python OLS only
+just force=true bench-all           # Rerun everything
 ```
-
-Each combine command is independent - `combine-ols` only affects `bench_ols.csv`,
-not `bench_poisson.csv` or `bench_logit.csv`.
 
 #### Filtering Datasets
 
@@ -132,10 +101,9 @@ All benchmark commands support an optional filter to run only specific datasets.
 For example, to run only "simple" datasets (excluding "difficult"):
 
 ```bash
-# Filter by dataset name pattern
-just bench-ols simple           # Only simple datasets
-just bench-python-ols simple    # Python only, simple datasets
-just bench-all simple           # All benchmarks, simple datasets only
+just filter=simple bench-ols           # Only simple datasets
+just filter=simple bench-python-ols    # Python only, simple datasets
+just filter=simple force=true bench-ols # Combined with force rerun
 ```
 
 Run `just` to see all available commands.
