@@ -146,25 +146,29 @@ color_switch <- c(
   "fixest::feols" = "#5C4CBF",
   "fixest::fepois" = "#5C4CBF",
   "fixest::feglm_logit" = "#5C4CBF",
+  "pyfixest.feols (scipy)" = "#FF7043",
   "pyfixest.feols (rust)" = "#2DB25F",
   "pyfixest.feols (numba)" = "#1E88E5",
+  "pyfixest.fepois (scipy)" = "#FF7043",
   "pyfixest.fepois (rust)" = "#2DB25F",
   "pyfixest.fepois (numba)" = "#1E88E5",
+  "pyfixest.feglm_logit (scipy)" = "#FF7043",
   "pyfixest.feglm_logit (rust)" = "#2DB25F",
   "pyfixest.feglm_logit (numba)" = "#1E88E5",
   "FixedEffectModels.reg" = "#0188AC",
   "GLFixedEffectModels Logit" = "#0188AC",
   "GLFixedEffectModels Poisson" = "#0188AC",
   "lfe::felm" = "#ffc517",
-  "linearmodels.AbsorbingLS" = "#E57373",
-  "statsmodels.OLS" = "#9C27B0"
+  "linearmodels.AbsorbingLS" = "#000000",
+  "statsmodels.OLS" = "#9E9E9E"
 )
 
 dgp_labels <- c("simple" = "Simple", "difficult" = "Difficult")
 n_fe_labels <- c("2" = "Unit + Time FEs", "3" = "Unit + Time + Firm FEs")
 
-# Helper function to create summary plot
+# Helper function to create slowdown ratio plot (relative to fixest)
 create_benchmark_plot <- function(data, title_suffix = "") {
+  # Aggregate mean times
   summ <- data |>
     _[n_fe %in% c(2L, 3L), ] |>
     _[,
@@ -188,15 +192,46 @@ create_benchmark_plot <- function(data, title_suffix = "") {
     ] |>
     _[order(dgp_label, n_fe_label), ]
 
+  # Extract fixest baseline times
+  baseline <- summ[grepl("^fixest::", est_name), .(dgp_name, n_fe, n_obs, baseline_time = mean_time)]
+
+  # Join and compute slowdown ratio
+  summ <- summ[baseline, on = .(dgp_name, n_fe, n_obs), nomatch = NULL]
+  summ[, slowdown := mean_time / baseline_time]
+
+  # Remove fixest itself (always 1.0)
+  summ <- summ[!grepl("^fixest::", est_name)]
+
+  # Prepare baseline labels for annotation
+  baseline_labels <- baseline[, .(dgp_name, n_fe, n_obs, baseline_time)]
+  baseline_labels[, dgp_label := factor(
+    dgp_labels[match(dgp_name, names(dgp_labels))], dgp_labels
+  )]
+  baseline_labels[, n_fe_label := factor(
+    n_fe_labels[match(n_fe, names(n_fe_labels))], n_fe_labels
+  )]
+  baseline_labels[, time_label := fifelse(
+    baseline_time >= 1,
+    sprintf("%.1fs", baseline_time),
+    sprintf("%.0fms", baseline_time * 1000)
+  )]
+
   summ |>
     ggplot() +
+    geom_hline(yintercept = 1, linetype = "dashed", color = "#5C4CBF", linewidth = 0.7) +
     geom_point(
-      aes(x = n_obs, y = mean_time, color = est_name),
+      aes(x = n_obs, y = slowdown, color = est_name),
       size = 2, shape = 15
     ) +
     geom_line(
-      aes(x = n_obs, y = mean_time, color = est_name),
+      aes(x = n_obs, y = slowdown, color = est_name),
       linewidth = 1.15
+    ) +
+    geom_label(
+      data = baseline_labels,
+      aes(x = n_obs, y = 1, label = time_label),
+      vjust = 1.3, size = 2.2, color = "#5C4CBF",
+      fill = "white", label.size = 0, label.padding = unit(1, "pt")
     ) +
     facet_grid(dgp_label ~ n_fe_label) +
     scale_x_continuous(
@@ -204,16 +239,16 @@ create_benchmark_plot <- function(data, title_suffix = "") {
       labels = scales::label_number(scale_cut = scales::cut_long_scale())
     ) +
     scale_y_continuous(
-      breaks = c(0.01, 0.1, 1, 10, 60, 300),
-      transform = "log10",
-      labels = scales::label_timespan()
+      transform = "log2",
+      breaks = c(0.5, 1, 2, 4, 8, 16, 32, 64),
+      labels = function(x) paste0(x, "x")
     ) +
     scale_color_manual(values = color_switch) +
     labs(
       x = "Number of Observations",
-      y = "Mean Estimation Time",
+      y = "Slowdown vs fixest",
       color = NULL,
-      caption = "Missing points indicate OOM, numerical errors, or timeouts (>60s)"
+      caption = "Dashed line = fixest (1x). Values >1x are slower. Missing points indicate failures."
     ) +
     custom_theme(legend = "bottom")
 }

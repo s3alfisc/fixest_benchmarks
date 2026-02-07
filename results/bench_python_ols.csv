@@ -1,289 +1,361 @@
 iter,time,est_name,n_fe,dgp_name,n_obs
-1,0.025016999999934342,pyfixest.feols (rust),2,difficult,100000
-1,0.013428500002191868,pyfixest.feols (numba),2,difficult,100000
-1,0.1107759590013302,linearmodels.AbsorbingLS,2,difficult,100000
+1,0.2719042089993309,pyfixest.feols (scipy),2,difficult,100000
+1,0.060946916997636436,pyfixest.feols (numba),2,difficult,100000
+1,0.062121041999489535,pyfixest.feols (rust),2,difficult,100000
+1,0.09508787499726168,linearmodels.AbsorbingLS,2,difficult,100000
 1,,statsmodels.OLS,2,difficult,100000
-1,1.2233116659990628,pyfixest.feols (rust),3,difficult,100000
-1,3.582560458999069,pyfixest.feols (numba),3,difficult,100000
-1,33.632383667001704,linearmodels.AbsorbingLS,3,difficult,100000
+1,1.9159939170021971,pyfixest.feols (scipy),3,difficult,100000
+1,3.1268400420012767,pyfixest.feols (numba),3,difficult,100000
+1,2.0906641250003304,pyfixest.feols (rust),3,difficult,100000
+1,26.214070583002467,linearmodels.AbsorbingLS,3,difficult,100000
 1,,statsmodels.OLS,3,difficult,100000
-2,0.04318054199757171,pyfixest.feols (rust),2,difficult,100000
-2,0.01756237500012503,pyfixest.feols (numba),2,difficult,100000
-2,0.12448245899940957,linearmodels.AbsorbingLS,2,difficult,100000
+2,0.2633748750013183,pyfixest.feols (scipy),2,difficult,100000
+2,0.06016308299876982,pyfixest.feols (numba),2,difficult,100000
+2,0.059512874999199994,pyfixest.feols (rust),2,difficult,100000
+2,0.0955225000034261,linearmodels.AbsorbingLS,2,difficult,100000
 2,,statsmodels.OLS,2,difficult,100000
-2,1.2126287920000323,pyfixest.feols (rust),3,difficult,100000
-2,3.151819708997209,pyfixest.feols (numba),3,difficult,100000
-2,30.51858295800048,linearmodels.AbsorbingLS,3,difficult,100000
+2,2.022765375000745,pyfixest.feols (scipy),3,difficult,100000
+2,2.7668799589991977,pyfixest.feols (numba),3,difficult,100000
+2,1.7505996670006425,pyfixest.feols (rust),3,difficult,100000
+2,23.011763375001465,linearmodels.AbsorbingLS,3,difficult,100000
 2,,statsmodels.OLS,3,difficult,100000
-3,0.020927040997776203,pyfixest.feols (rust),2,difficult,100000
-3,0.012293083000258775,pyfixest.feols (numba),2,difficult,100000
-3,0.11799141699884785,linearmodels.AbsorbingLS,2,difficult,100000
+3,0.26349375000063446,pyfixest.feols (scipy),2,difficult,100000
+3,0.058702667000034126,pyfixest.feols (numba),2,difficult,100000
+3,0.058561875001032604,pyfixest.feols (rust),2,difficult,100000
+3,0.09652408400143031,linearmodels.AbsorbingLS,2,difficult,100000
 3,,statsmodels.OLS,2,difficult,100000
-3,1.1595590420001827,pyfixest.feols (rust),3,difficult,100000
-3,3.2287137500024983,pyfixest.feols (numba),3,difficult,100000
-3,37.898543499999505,linearmodels.AbsorbingLS,3,difficult,100000
+3,1.9946083329996327,pyfixest.feols (scipy),3,difficult,100000
+3,2.881196791000548,pyfixest.feols (numba),3,difficult,100000
+3,1.8407325830012269,pyfixest.feols (rust),3,difficult,100000
+3,24.042179250001936,linearmodels.AbsorbingLS,3,difficult,100000
 3,,statsmodels.OLS,3,difficult,100000
-1,0.010892416998103727,pyfixest.feols (rust),2,difficult,10000
-1,0.02355862500189687,pyfixest.feols (numba),2,difficult,10000
-1,0.025319249998574378,linearmodels.AbsorbingLS,2,difficult,10000
-1,1.6928332500028773,statsmodels.OLS,2,difficult,10000
-1,0.8897271250025369,pyfixest.feols (rust),3,difficult,10000
-1,2.698910666997108,pyfixest.feols (numba),3,difficult,10000
-1,0.06868350000149803,linearmodels.AbsorbingLS,3,difficult,10000
-1,1.7765002499982074,statsmodels.OLS,3,difficult,10000
-2,0.011344915998051874,pyfixest.feols (rust),2,difficult,10000
-2,0.0063923330017132685,pyfixest.feols (numba),2,difficult,10000
-2,0.023262374998012092,linearmodels.AbsorbingLS,2,difficult,10000
-2,1.574259125001845,statsmodels.OLS,2,difficult,10000
-2,0.8848245830013184,pyfixest.feols (rust),3,difficult,10000
-2,2.654322875001526,pyfixest.feols (numba),3,difficult,10000
-2,0.05963437500031432,linearmodels.AbsorbingLS,3,difficult,10000
-2,1.7560856249983772,statsmodels.OLS,3,difficult,10000
-3,0.0082088749986724,pyfixest.feols (rust),2,difficult,10000
-3,0.005084999997052364,pyfixest.feols (numba),2,difficult,10000
-3,0.01757687500139582,linearmodels.AbsorbingLS,2,difficult,10000
-3,1.5858917079967796,statsmodels.OLS,2,difficult,10000
-3,0.8534233749996929,pyfixest.feols (rust),3,difficult,10000
-3,2.536415375001525,pyfixest.feols (numba),3,difficult,10000
-3,0.05327733399826684,linearmodels.AbsorbingLS,3,difficult,10000
-3,2.1352883749968896,statsmodels.OLS,3,difficult,10000
-1,0.005592207999143284,pyfixest.feols (rust),2,difficult,1000
-1,0.0032292079995386302,pyfixest.feols (numba),2,difficult,1000
-1,0.00850324999919394,linearmodels.AbsorbingLS,2,difficult,1000
-1,0.009664125002018409,statsmodels.OLS,2,difficult,1000
-1,0.6617914579983335,pyfixest.feols (rust),3,difficult,1000
-1,2.0737404160026927,pyfixest.feols (numba),3,difficult,1000
-1,0.008922166998672765,linearmodels.AbsorbingLS,3,difficult,1000
-1,0.010565166001470061,statsmodels.OLS,3,difficult,1000
-2,0.0049862920022860635,pyfixest.feols (rust),2,difficult,1000
-2,0.003205500001058681,pyfixest.feols (numba),2,difficult,1000
-2,0.009164916998997796,linearmodels.AbsorbingLS,2,difficult,1000
-2,0.00924154099993757,statsmodels.OLS,2,difficult,1000
-2,0.6669911659992067,pyfixest.feols (rust),3,difficult,1000
-2,2.0738999580025848,pyfixest.feols (numba),3,difficult,1000
-2,0.008961791998444824,linearmodels.AbsorbingLS,3,difficult,1000
-2,0.01078179199976148,statsmodels.OLS,3,difficult,1000
-3,0.004433083999174414,pyfixest.feols (rust),2,difficult,1000
-3,0.003295750000688713,pyfixest.feols (numba),2,difficult,1000
-3,0.008451834000879899,linearmodels.AbsorbingLS,2,difficult,1000
-3,0.009684833999926923,statsmodels.OLS,2,difficult,1000
-3,0.6582517080023536,pyfixest.feols (rust),3,difficult,1000
-3,2.058163292000245,pyfixest.feols (numba),3,difficult,1000
-3,0.009620041997550288,linearmodels.AbsorbingLS,3,difficult,1000
-3,0.010952749998978106,statsmodels.OLS,3,difficult,1000
-1,0.9725269170012325,pyfixest.feols (rust),2,difficult,1000000
-1,1.7904212909998023,pyfixest.feols (numba),2,difficult,1000000
-1,1.0038994579990685,linearmodels.AbsorbingLS,2,difficult,1000000
+1,0.0741305410010682,pyfixest.feols (scipy),2,difficult,10000
+1,0.04642437499933294,pyfixest.feols (numba),2,difficult,10000
+1,0.04608883300170419,pyfixest.feols (rust),2,difficult,10000
+1,0.014182582999637816,linearmodels.AbsorbingLS,2,difficult,10000
+1,0.8279667499991774,statsmodels.OLS,2,difficult,10000
+1,1.0781163329993433,pyfixest.feols (scipy),3,difficult,10000
+1,1.8685184579990164,pyfixest.feols (numba),3,difficult,10000
+1,0.9068379999989702,pyfixest.feols (rust),3,difficult,10000
+1,0.04542975000003935,linearmodels.AbsorbingLS,3,difficult,10000
+1,0.9065596660002484,statsmodels.OLS,3,difficult,10000
+2,0.07393650000085472,pyfixest.feols (scipy),2,difficult,10000
+2,0.046076916998572415,pyfixest.feols (numba),2,difficult,10000
+2,0.04624695900201914,pyfixest.feols (rust),2,difficult,10000
+2,0.013718125002924353,linearmodels.AbsorbingLS,2,difficult,10000
+2,0.8370987909984251,statsmodels.OLS,2,difficult,10000
+2,1.092040542000177,pyfixest.feols (scipy),3,difficult,10000
+2,1.8768109579978045,pyfixest.feols (numba),3,difficult,10000
+2,0.9094562499994936,pyfixest.feols (rust),3,difficult,10000
+2,0.043508000002475455,linearmodels.AbsorbingLS,3,difficult,10000
+2,0.9096489170005952,statsmodels.OLS,3,difficult,10000
+3,0.07493091699871002,pyfixest.feols (scipy),2,difficult,10000
+3,0.048361708999436814,pyfixest.feols (numba),2,difficult,10000
+3,0.046763875001488486,pyfixest.feols (rust),2,difficult,10000
+3,0.014131042000371963,linearmodels.AbsorbingLS,2,difficult,10000
+3,0.8201340419982444,statsmodels.OLS,2,difficult,10000
+3,1.0957361250002577,pyfixest.feols (scipy),3,difficult,10000
+3,1.863975667001796,pyfixest.feols (numba),3,difficult,10000
+3,0.9074412910013052,pyfixest.feols (rust),3,difficult,10000
+3,0.04807254199840827,linearmodels.AbsorbingLS,3,difficult,10000
+3,0.9065876660024514,statsmodels.OLS,3,difficult,10000
+1,0.05503087500255788,pyfixest.feols (scipy),2,difficult,1000
+1,0.04659166599958553,pyfixest.feols (numba),2,difficult,1000
+1,0.045248459002323216,pyfixest.feols (rust),2,difficult,1000
+1,0.0061848330005886964,linearmodels.AbsorbingLS,2,difficult,1000
+1,0.00808366699857288,statsmodels.OLS,2,difficult,1000
+1,1.0563245830016967,pyfixest.feols (scipy),3,difficult,1000
+1,1.8638894579999032,pyfixest.feols (numba),3,difficult,1000
+1,0.9048096250007802,pyfixest.feols (rust),3,difficult,1000
+1,0.006811541999923065,linearmodels.AbsorbingLS,3,difficult,1000
+1,0.009259291000489611,statsmodels.OLS,3,difficult,1000
+2,0.05502650000198628,pyfixest.feols (scipy),2,difficult,1000
+2,0.04516220900040935,pyfixest.feols (numba),2,difficult,1000
+2,0.04504600000291248,pyfixest.feols (rust),2,difficult,1000
+2,0.006239333000849001,linearmodels.AbsorbingLS,2,difficult,1000
+2,0.008205166999687208,statsmodels.OLS,2,difficult,1000
+2,1.0568132080006762,pyfixest.feols (scipy),3,difficult,1000
+2,1.8629443749996426,pyfixest.feols (numba),3,difficult,1000
+2,0.9152744999992137,pyfixest.feols (rust),3,difficult,1000
+2,0.006996916999923997,linearmodels.AbsorbingLS,3,difficult,1000
+2,0.009244000000762753,statsmodels.OLS,3,difficult,1000
+3,0.05639270800020313,pyfixest.feols (scipy),2,difficult,1000
+3,0.04561870800171164,pyfixest.feols (numba),2,difficult,1000
+3,0.04532408300292445,pyfixest.feols (rust),2,difficult,1000
+3,0.0061084999979357235,linearmodels.AbsorbingLS,2,difficult,1000
+3,0.007934875000501052,statsmodels.OLS,2,difficult,1000
+3,1.053557125000225,pyfixest.feols (scipy),3,difficult,1000
+3,1.8706326669998816,pyfixest.feols (numba),3,difficult,1000
+3,0.9077632920016185,pyfixest.feols (rust),3,difficult,1000
+3,0.006866167001135182,linearmodels.AbsorbingLS,3,difficult,1000
+3,0.009232541000528727,statsmodels.OLS,3,difficult,1000
+1,3.555879167000967,pyfixest.feols (scipy),2,difficult,1000000
+1,2.043497083002876,pyfixest.feols (numba),2,difficult,1000000
+1,1.0691342089994578,pyfixest.feols (rust),2,difficult,1000000
+1,0.9834986659989227,linearmodels.AbsorbingLS,2,difficult,1000000
 1,,statsmodels.OLS,2,difficult,1000000
-1,2.779796874998283,pyfixest.feols (rust),3,difficult,1000000
-1,42.21786566599985,pyfixest.feols (numba),3,difficult,1000000
+1,10.041377000001376,pyfixest.feols (scipy),3,difficult,1000000
+1,41.379256083000655,pyfixest.feols (numba),3,difficult,1000000
+1,38.528653999997914,pyfixest.feols (rust),3,difficult,1000000
 1,,linearmodels.AbsorbingLS,3,difficult,1000000
 1,,statsmodels.OLS,3,difficult,1000000
-2,0.9385633329984557,pyfixest.feols (rust),2,difficult,1000000
-2,1.748581332998583,pyfixest.feols (numba),2,difficult,1000000
-2,0.9995067090021621,linearmodels.AbsorbingLS,2,difficult,1000000
+2,3.5525010419987666,pyfixest.feols (scipy),2,difficult,1000000
+2,2.0509206669994455,pyfixest.feols (numba),2,difficult,1000000
+2,1.0719702089991188,pyfixest.feols (rust),2,difficult,1000000
+2,0.9825419160006277,linearmodels.AbsorbingLS,2,difficult,1000000
 2,,statsmodels.OLS,2,difficult,1000000
-2,4.055607999998756,pyfixest.feols (rust),3,difficult,1000000
-2,31.58644254200044,pyfixest.feols (numba),3,difficult,1000000
+2,9.799706750000041,pyfixest.feols (scipy),3,difficult,1000000
+2,31.74789837500066,pyfixest.feols (numba),3,difficult,1000000
+2,29.332289917001617,pyfixest.feols (rust),3,difficult,1000000
 2,,linearmodels.AbsorbingLS,3,difficult,1000000
 2,,statsmodels.OLS,3,difficult,1000000
-3,0.9317138750011509,pyfixest.feols (rust),2,difficult,1000000
-3,1.7494376659997215,pyfixest.feols (numba),2,difficult,1000000
-3,0.9998918750025041,linearmodels.AbsorbingLS,2,difficult,1000000
+3,3.581905792001635,pyfixest.feols (scipy),2,difficult,1000000
+3,2.069509500001004,pyfixest.feols (numba),2,difficult,1000000
+3,1.0848659160001262,pyfixest.feols (rust),2,difficult,1000000
+3,0.993528792001598,linearmodels.AbsorbingLS,2,difficult,1000000
 3,,statsmodels.OLS,2,difficult,1000000
-3,4.03896375000113,pyfixest.feols (rust),3,difficult,1000000
-3,27.97127654099677,pyfixest.feols (numba),3,difficult,1000000
+3,9.524112666000292,pyfixest.feols (scipy),3,difficult,1000000
+3,28.299161165999976,pyfixest.feols (numba),3,difficult,1000000
+3,26.148744583002554,pyfixest.feols (rust),3,difficult,1000000
 3,,linearmodels.AbsorbingLS,3,difficult,1000000
 3,,statsmodels.OLS,3,difficult,1000000
-1,1.0373829170021054,pyfixest.feols (rust),2,difficult,2000000
-1,1.8294340419997752,pyfixest.feols (numba),2,difficult,2000000
-1,2.0232219159988745,linearmodels.AbsorbingLS,2,difficult,2000000
+1,5.74780466700031,pyfixest.feols (scipy),2,difficult,2000000
+1,2.2368473749993427,pyfixest.feols (numba),2,difficult,2000000
+1,1.2536849579992122,pyfixest.feols (rust),2,difficult,2000000
+1,2.0257676250002987,linearmodels.AbsorbingLS,2,difficult,2000000
 1,,statsmodels.OLS,2,difficult,2000000
-1,7.261874040999828,pyfixest.feols (rust),3,difficult,2000000
-1,46.891068709002866,pyfixest.feols (numba),3,difficult,2000000
+1,16.31931679199988,pyfixest.feols (scipy),3,difficult,2000000
+1,47.31045054200149,pyfixest.feols (numba),3,difficult,2000000
+1,45.41030345799663,pyfixest.feols (rust),3,difficult,2000000
 1,,linearmodels.AbsorbingLS,3,difficult,2000000
 1,,statsmodels.OLS,3,difficult,2000000
-2,1.0384378749986354,pyfixest.feols (rust),2,difficult,2000000
-2,1.8202253750023374,pyfixest.feols (numba),2,difficult,2000000
-2,2.022088542002166,linearmodels.AbsorbingLS,2,difficult,2000000
+2,5.587730082996131,pyfixest.feols (scipy),2,difficult,2000000
+2,2.2352102500008186,pyfixest.feols (numba),2,difficult,2000000
+2,1.249851624997973,pyfixest.feols (rust),2,difficult,2000000
+2,2.014054125000257,linearmodels.AbsorbingLS,2,difficult,2000000
 2,,statsmodels.OLS,2,difficult,2000000
-2,6.009130833001109,pyfixest.feols (rust),3,difficult,2000000
-2,50.468737208000675,pyfixest.feols (numba),3,difficult,2000000
+2,16.091844916998525,pyfixest.feols (scipy),3,difficult,2000000
+2,51.31538308400195,pyfixest.feols (numba),3,difficult,2000000
+2,49.14993174999836,pyfixest.feols (rust),3,difficult,2000000
 2,,linearmodels.AbsorbingLS,3,difficult,2000000
 2,,statsmodels.OLS,3,difficult,2000000
-3,1.002770708000753,pyfixest.feols (rust),2,difficult,2000000
-3,1.8109778329999244,pyfixest.feols (numba),2,difficult,2000000
-3,2.0075426250004966,linearmodels.AbsorbingLS,2,difficult,2000000
+3,5.609812000002421,pyfixest.feols (scipy),2,difficult,2000000
+3,2.2395484160006163,pyfixest.feols (numba),2,difficult,2000000
+3,1.2371187079988886,pyfixest.feols (rust),2,difficult,2000000
+3,2.0253916250003385,linearmodels.AbsorbingLS,2,difficult,2000000
 3,,statsmodels.OLS,2,difficult,2000000
-3,6.07059583299997,pyfixest.feols (rust),3,difficult,2000000
+3,16.794381250001607,pyfixest.feols (scipy),3,difficult,2000000
 3,,pyfixest.feols (numba),3,difficult,2000000
+3,,pyfixest.feols (rust),3,difficult,2000000
 3,,linearmodels.AbsorbingLS,3,difficult,2000000
 3,,statsmodels.OLS,3,difficult,2000000
-1,0.08884737500193296,pyfixest.feols (rust),2,difficult,500000
-1,0.04153887499705888,pyfixest.feols (numba),2,difficult,500000
-1,0.4825180839980021,linearmodels.AbsorbingLS,2,difficult,500000
+1,1.3144265829978394,pyfixest.feols (scipy),2,difficult,500000
+1,0.11245145800057799,pyfixest.feols (numba),2,difficult,500000
+1,0.11450812499970198,pyfixest.feols (rust),2,difficult,500000
+1,0.4940470000001369,linearmodels.AbsorbingLS,2,difficult,500000
 1,,statsmodels.OLS,2,difficult,500000
-1,2.447060334001435,pyfixest.feols (rust),3,difficult,500000
-1,12.791963749998104,pyfixest.feols (numba),3,difficult,500000
+1,5.690417167003034,pyfixest.feols (scipy),3,difficult,500000
+1,13.262183917002403,pyfixest.feols (numba),3,difficult,500000
+1,11.690950999996858,pyfixest.feols (rust),3,difficult,500000
 1,,linearmodels.AbsorbingLS,3,difficult,500000
 1,,statsmodels.OLS,3,difficult,500000
-2,0.06849183300073491,pyfixest.feols (rust),2,difficult,500000
-2,0.0346603750003851,pyfixest.feols (numba),2,difficult,500000
-2,0.47705162499914877,linearmodels.AbsorbingLS,2,difficult,500000
+2,1.0816122089963756,pyfixest.feols (scipy),2,difficult,500000
+2,0.11475408299884293,pyfixest.feols (numba),2,difficult,500000
+2,0.11807316699560033,pyfixest.feols (rust),2,difficult,500000
+2,0.48227629200118827,linearmodels.AbsorbingLS,2,difficult,500000
 2,,statsmodels.OLS,2,difficult,500000
-2,2.4598333750000165,pyfixest.feols (rust),3,difficult,500000
-2,13.605681124998227,pyfixest.feols (numba),3,difficult,500000
+2,5.3070321249979315,pyfixest.feols (scipy),3,difficult,500000
+2,14.152306082993164,pyfixest.feols (numba),3,difficult,500000
+2,12.484739375002391,pyfixest.feols (rust),3,difficult,500000
 2,,linearmodels.AbsorbingLS,3,difficult,500000
 2,,statsmodels.OLS,3,difficult,500000
-3,0.06593516700013424,pyfixest.feols (rust),2,difficult,500000
-3,0.045649832998606144,pyfixest.feols (numba),2,difficult,500000
-3,0.48095637499864097,linearmodels.AbsorbingLS,2,difficult,500000
+3,1.1165925830064225,pyfixest.feols (scipy),2,difficult,500000
+3,0.11474841599556385,pyfixest.feols (numba),2,difficult,500000
+3,0.1159464169977582,pyfixest.feols (rust),2,difficult,500000
+3,0.4912858750030864,linearmodels.AbsorbingLS,2,difficult,500000
 3,,statsmodels.OLS,2,difficult,500000
-3,2.1161266669987526,pyfixest.feols (rust),3,difficult,500000
-3,14.905475999999908,pyfixest.feols (numba),3,difficult,500000
+3,5.766905415999645,pyfixest.feols (scipy),3,difficult,500000
+3,15.252569749995018,pyfixest.feols (numba),3,difficult,500000
+3,13.661470582999755,pyfixest.feols (rust),3,difficult,500000
 3,,linearmodels.AbsorbingLS,3,difficult,500000
 3,,statsmodels.OLS,3,difficult,500000
-1,0.016696457998477854,pyfixest.feols (rust),2,simple,100000
-1,0.012216417002491653,pyfixest.feols (numba),2,simple,100000
-1,0.09717849999651662,linearmodels.AbsorbingLS,2,simple,100000
+1,0.268278666997503,pyfixest.feols (scipy),2,simple,100000
+1,0.06150462499499554,pyfixest.feols (numba),2,simple,100000
+1,0.06133133399998769,pyfixest.feols (rust),2,simple,100000
+1,0.09690483399754157,linearmodels.AbsorbingLS,2,simple,100000
 1,,statsmodels.OLS,2,simple,100000
-1,0.026334041998779867,pyfixest.feols (rust),3,simple,100000
-1,0.019156624999595806,pyfixest.feols (numba),3,simple,100000
-1,0.16218279099848587,linearmodels.AbsorbingLS,3,simple,100000
+1,0.32268550000299,pyfixest.feols (scipy),3,simple,100000
+1,0.064331375004258,pyfixest.feols (numba),3,simple,100000
+1,0.06377845899987733,pyfixest.feols (rust),3,simple,100000
+1,0.1574583330002497,linearmodels.AbsorbingLS,3,simple,100000
 1,,statsmodels.OLS,3,simple,100000
-2,0.017042792002030183,pyfixest.feols (rust),2,simple,100000
-2,0.01005704099952709,pyfixest.feols (numba),2,simple,100000
-2,0.09601704200031236,linearmodels.AbsorbingLS,2,simple,100000
+2,0.27239750000444474,pyfixest.feols (scipy),2,simple,100000
+2,0.06014087500079768,pyfixest.feols (numba),2,simple,100000
+2,0.06076004200440366,pyfixest.feols (rust),2,simple,100000
+2,0.09621870800037868,linearmodels.AbsorbingLS,2,simple,100000
 2,,statsmodels.OLS,2,simple,100000
-2,0.02154283300114912,pyfixest.feols (rust),3,simple,100000
-2,0.01670558299883851,pyfixest.feols (numba),3,simple,100000
-2,0.16230354199797148,linearmodels.AbsorbingLS,3,simple,100000
+2,0.3327370830011205,pyfixest.feols (scipy),3,simple,100000
+2,0.06589266700029839,pyfixest.feols (numba),3,simple,100000
+2,0.06534820899832994,pyfixest.feols (rust),3,simple,100000
+2,0.16523533400322776,linearmodels.AbsorbingLS,3,simple,100000
 2,,statsmodels.OLS,3,simple,100000
-3,0.014990708001278108,pyfixest.feols (rust),2,simple,100000
-3,0.008961417002865346,pyfixest.feols (numba),2,simple,100000
-3,0.0950401249974675,linearmodels.AbsorbingLS,2,simple,100000
+3,0.2690710839960957,pyfixest.feols (scipy),2,simple,100000
+3,0.05985516600048868,pyfixest.feols (numba),2,simple,100000
+3,0.05934162499761442,pyfixest.feols (rust),2,simple,100000
+3,0.09627849999378668,linearmodels.AbsorbingLS,2,simple,100000
 3,,statsmodels.OLS,2,simple,100000
-3,0.022150542001327267,pyfixest.feols (rust),3,simple,100000
-3,0.013561749998189043,pyfixest.feols (numba),3,simple,100000
-3,0.1535467499998049,linearmodels.AbsorbingLS,3,simple,100000
+3,0.32328491699445294,pyfixest.feols (scipy),3,simple,100000
+3,0.06587741700059269,pyfixest.feols (numba),3,simple,100000
+3,0.06574054199882085,pyfixest.feols (rust),3,simple,100000
+3,0.16145304100064095,linearmodels.AbsorbingLS,3,simple,100000
 3,,statsmodels.OLS,3,simple,100000
-1,0.004100332997040823,pyfixest.feols (rust),2,simple,10000
-1,0.003274209000664996,pyfixest.feols (numba),2,simple,10000
-1,0.01379412499954924,linearmodels.AbsorbingLS,2,simple,10000
-1,0.8296353750010894,statsmodels.OLS,2,simple,10000
-1,0.007020291999651818,pyfixest.feols (rust),3,simple,10000
-1,0.003852292000374291,pyfixest.feols (numba),3,simple,10000
-1,0.01966316700054449,linearmodels.AbsorbingLS,3,simple,10000
-1,0.9169987499990384,statsmodels.OLS,3,simple,10000
-2,0.00482120800006669,pyfixest.feols (rust),2,simple,10000
-2,0.0028909169996040873,pyfixest.feols (numba),2,simple,10000
-2,0.013683999997738283,linearmodels.AbsorbingLS,2,simple,10000
-2,0.8319162920015515,statsmodels.OLS,2,simple,10000
-2,0.004889083000307437,pyfixest.feols (rust),3,simple,10000
-2,0.004715458999271505,pyfixest.feols (numba),3,simple,10000
-2,0.0199302919972979,linearmodels.AbsorbingLS,3,simple,10000
-2,0.9104830409996794,statsmodels.OLS,3,simple,10000
-3,0.004239541998686036,pyfixest.feols (rust),2,simple,10000
-3,0.0026123749994440004,pyfixest.feols (numba),2,simple,10000
-3,0.014057333999517141,linearmodels.AbsorbingLS,2,simple,10000
-3,0.8242639159980172,statsmodels.OLS,2,simple,10000
-3,0.006399541001883335,pyfixest.feols (rust),3,simple,10000
-3,0.0037151249998714775,pyfixest.feols (numba),3,simple,10000
-3,0.019819749999442138,linearmodels.AbsorbingLS,3,simple,10000
-3,0.9126686250019702,statsmodels.OLS,3,simple,10000
-1,0.0038744580015190877,pyfixest.feols (rust),2,simple,1000
-1,0.002910832998168189,pyfixest.feols (numba),2,simple,1000
-1,0.0061524999982793815,linearmodels.AbsorbingLS,2,simple,1000
-1,0.00804420799977379,statsmodels.OLS,2,simple,1000
-1,0.004771957999764709,pyfixest.feols (rust),3,simple,1000
-1,0.002581583001301624,pyfixest.feols (numba),3,simple,1000
-1,0.0070787090007797815,linearmodels.AbsorbingLS,3,simple,1000
-1,0.009286542001063935,statsmodels.OLS,3,simple,1000
-2,0.0035049170001002494,pyfixest.feols (rust),2,simple,1000
-2,0.0024492090014973655,pyfixest.feols (numba),2,simple,1000
-2,0.005954582997219404,linearmodels.AbsorbingLS,2,simple,1000
-2,0.008143041999574052,statsmodels.OLS,2,simple,1000
-2,0.005032416000176454,pyfixest.feols (rust),3,simple,1000
-2,0.002944457999547012,pyfixest.feols (numba),3,simple,1000
-2,0.007260750000568805,linearmodels.AbsorbingLS,3,simple,1000
-2,0.009329624997917563,statsmodels.OLS,3,simple,1000
-3,0.003592667002521921,pyfixest.feols (rust),2,simple,1000
-3,0.0022285420018306468,pyfixest.feols (numba),2,simple,1000
-3,0.0061466250008379575,linearmodels.AbsorbingLS,2,simple,1000
-3,0.00821400000131689,statsmodels.OLS,2,simple,1000
-3,0.005575375002081273,pyfixest.feols (rust),3,simple,1000
-3,0.0027049160016758833,pyfixest.feols (numba),3,simple,1000
-3,0.0069713330012746155,linearmodels.AbsorbingLS,3,simple,1000
-3,0.009236999998393003,statsmodels.OLS,3,simple,1000
-1,0.07303345800028183,pyfixest.feols (rust),2,simple,1000000
-1,0.07939195799917798,pyfixest.feols (numba),2,simple,1000000
-1,0.9728578750000452,linearmodels.AbsorbingLS,2,simple,1000000
+1,0.0732181249986752,pyfixest.feols (scipy),2,simple,10000
+1,0.04677941699628718,pyfixest.feols (numba),2,simple,10000
+1,0.04718275000050198,pyfixest.feols (rust),2,simple,10000
+1,0.01423616599640809,linearmodels.AbsorbingLS,2,simple,10000
+1,0.8231336250028107,statsmodels.OLS,2,simple,10000
+1,0.08207937499537366,pyfixest.feols (scipy),3,simple,10000
+1,0.04808700000285171,pyfixest.feols (numba),3,simple,10000
+1,0.04857116699713515,pyfixest.feols (rust),3,simple,10000
+1,0.019382999998924788,linearmodels.AbsorbingLS,3,simple,10000
+1,0.9063998750061728,statsmodels.OLS,3,simple,10000
+2,0.07458533300086856,pyfixest.feols (scipy),2,simple,10000
+2,0.04823495900200214,pyfixest.feols (numba),2,simple,10000
+2,0.04735358399921097,pyfixest.feols (rust),2,simple,10000
+2,0.013849791001121048,linearmodels.AbsorbingLS,2,simple,10000
+2,0.8285490419948474,statsmodels.OLS,2,simple,10000
+2,0.0827549999958137,pyfixest.feols (scipy),3,simple,10000
+2,0.04825562499900116,pyfixest.feols (numba),3,simple,10000
+2,0.048571084000286646,pyfixest.feols (rust),3,simple,10000
+2,0.019925291002437007,linearmodels.AbsorbingLS,3,simple,10000
+2,0.911449958999583,statsmodels.OLS,3,simple,10000
+3,0.07517391700093867,pyfixest.feols (scipy),2,simple,10000
+3,0.04754108299675863,pyfixest.feols (numba),2,simple,10000
+3,0.04725175000203308,pyfixest.feols (rust),2,simple,10000
+3,0.013924209000833798,linearmodels.AbsorbingLS,2,simple,10000
+3,0.8244716669942136,statsmodels.OLS,2,simple,10000
+3,0.08178141700045671,pyfixest.feols (scipy),3,simple,10000
+3,0.04783774999668822,pyfixest.feols (numba),3,simple,10000
+3,0.04817062499932945,pyfixest.feols (rust),3,simple,10000
+3,0.01951191700209165,linearmodels.AbsorbingLS,3,simple,10000
+3,0.9150113329960732,statsmodels.OLS,3,simple,10000
+1,0.05626204200234497,pyfixest.feols (scipy),2,simple,1000
+1,0.04574625000532251,pyfixest.feols (numba),2,simple,1000
+1,0.045584332998259924,pyfixest.feols (rust),2,simple,1000
+1,0.005982374997984152,linearmodels.AbsorbingLS,2,simple,1000
+1,0.008229166000091936,statsmodels.OLS,2,simple,1000
+1,0.05868004199874122,pyfixest.feols (scipy),3,simple,1000
+1,0.046169834000465926,pyfixest.feols (numba),3,simple,1000
+1,0.04482062500028405,pyfixest.feols (rust),3,simple,1000
+1,0.007238624995807186,linearmodels.AbsorbingLS,3,simple,1000
+1,0.009345791004307102,statsmodels.OLS,3,simple,1000
+2,0.05604966599639738,pyfixest.feols (scipy),2,simple,1000
+2,0.04596954199951142,pyfixest.feols (numba),2,simple,1000
+2,0.04533633300161455,pyfixest.feols (rust),2,simple,1000
+2,0.006127666994871106,linearmodels.AbsorbingLS,2,simple,1000
+2,0.008178249998309184,statsmodels.OLS,2,simple,1000
+2,0.058012500005133916,pyfixest.feols (scipy),3,simple,1000
+2,0.04636887500237208,pyfixest.feols (numba),3,simple,1000
+2,0.04618075000325916,pyfixest.feols (rust),3,simple,1000
+2,0.00699499999609543,linearmodels.AbsorbingLS,3,simple,1000
+2,0.009354499998153187,statsmodels.OLS,3,simple,1000
+3,0.05573125000228174,pyfixest.feols (scipy),2,simple,1000
+3,0.04534195800079033,pyfixest.feols (numba),2,simple,1000
+3,0.04456916599883698,pyfixest.feols (rust),2,simple,1000
+3,0.006021541994414292,linearmodels.AbsorbingLS,2,simple,1000
+3,0.00813258300331654,statsmodels.OLS,2,simple,1000
+3,0.05697754099674057,pyfixest.feols (scipy),3,simple,1000
+3,0.04616600000008475,pyfixest.feols (numba),3,simple,1000
+3,0.04615599999669939,pyfixest.feols (rust),3,simple,1000
+3,0.007266666994837578,linearmodels.AbsorbingLS,3,simple,1000
+3,0.009322874997451436,statsmodels.OLS,3,simple,1000
+1,2.1294941669984837,pyfixest.feols (scipy),2,simple,1000000
+1,0.1966638750018319,pyfixest.feols (numba),2,simple,1000000
+1,0.19157516700215638,pyfixest.feols (rust),2,simple,1000000
+1,0.9835572500014678,linearmodels.AbsorbingLS,2,simple,1000000
 1,,statsmodels.OLS,2,simple,1000000
-1,0.12917716700030724,pyfixest.feols (rust),3,simple,1000000
-1,0.11889037500077393,pyfixest.feols (numba),3,simple,1000000
-1,1.9510640830012562,linearmodels.AbsorbingLS,3,simple,1000000
+1,2.727169125006185,pyfixest.feols (scipy),3,simple,1000000
+1,0.23699450000276556,pyfixest.feols (numba),3,simple,1000000
+1,0.23295487500581658,pyfixest.feols (rust),3,simple,1000000
+1,1.980125832997146,linearmodels.AbsorbingLS,3,simple,1000000
 1,,statsmodels.OLS,3,simple,1000000
-2,0.10806358300033025,pyfixest.feols (rust),2,simple,1000000
-2,0.06860679200326558,pyfixest.feols (numba),2,simple,1000000
-2,0.9782108750005136,linearmodels.AbsorbingLS,2,simple,1000000
+2,2.1310450409946498,pyfixest.feols (scipy),2,simple,1000000
+2,0.1906479160024901,pyfixest.feols (numba),2,simple,1000000
+2,0.1912813750022906,pyfixest.feols (rust),2,simple,1000000
+2,0.9830655840050895,linearmodels.AbsorbingLS,2,simple,1000000
 2,,statsmodels.OLS,2,simple,1000000
-2,0.14450554200084298,pyfixest.feols (rust),3,simple,1000000
-2,0.4453212500011432,pyfixest.feols (numba),3,simple,1000000
-2,1.9479516669998702,linearmodels.AbsorbingLS,3,simple,1000000
+2,2.731053333998716,pyfixest.feols (scipy),3,simple,1000000
+2,0.22511254200071562,pyfixest.feols (numba),3,simple,1000000
+2,0.2242257920006523,pyfixest.feols (rust),3,simple,1000000
+2,1.9681958750006743,linearmodels.AbsorbingLS,3,simple,1000000
 2,,statsmodels.OLS,3,simple,1000000
-3,0.09338741600004141,pyfixest.feols (rust),2,simple,1000000
-3,0.07195987500017509,pyfixest.feols (numba),2,simple,1000000
-3,0.9794067080001696,linearmodels.AbsorbingLS,2,simple,1000000
+3,2.192715749995841,pyfixest.feols (scipy),2,simple,1000000
+3,0.20448012500128243,pyfixest.feols (numba),2,simple,1000000
+3,0.1956778750027297,pyfixest.feols (rust),2,simple,1000000
+3,0.9955082919987035,linearmodels.AbsorbingLS,2,simple,1000000
 3,,statsmodels.OLS,2,simple,1000000
-3,0.13606499999877997,pyfixest.feols (rust),3,simple,1000000
-3,0.13065083400215372,pyfixest.feols (numba),3,simple,1000000
-3,1.9517339580015687,linearmodels.AbsorbingLS,3,simple,1000000
+3,2.6078622919958434,pyfixest.feols (scipy),3,simple,1000000
+3,0.23044354200101225,pyfixest.feols (numba),3,simple,1000000
+3,0.2266462080006022,pyfixest.feols (rust),3,simple,1000000
+3,1.9743264170028851,linearmodels.AbsorbingLS,3,simple,1000000
 3,,statsmodels.OLS,3,simple,1000000
-1,0.1919474159985839,pyfixest.feols (rust),2,simple,2000000
-1,0.13823508400309947,pyfixest.feols (numba),2,simple,2000000
-1,1.997440416002064,linearmodels.AbsorbingLS,2,simple,2000000
+1,4.388778208005533,pyfixest.feols (scipy),2,simple,2000000
+1,0.33661012499942444,pyfixest.feols (numba),2,simple,2000000
+1,0.3407239579973975,pyfixest.feols (rust),2,simple,2000000
+1,2.011331749999954,linearmodels.AbsorbingLS,2,simple,2000000
 1,,statsmodels.OLS,2,simple,2000000
-1,0.2472764999984065,pyfixest.feols (rust),3,simple,2000000
-1,0.2553370839996205,pyfixest.feols (numba),3,simple,2000000
-1,4.168783875000372,linearmodels.AbsorbingLS,3,simple,2000000
+1,5.203157750001992,pyfixest.feols (scipy),3,simple,2000000
+1,0.43806579199736007,pyfixest.feols (numba),3,simple,2000000
+1,0.45243441599450307,pyfixest.feols (rust),3,simple,2000000
+1,4.206328125001164,linearmodels.AbsorbingLS,3,simple,2000000
 1,,statsmodels.OLS,3,simple,2000000
-2,0.16268037500049104,pyfixest.feols (rust),2,simple,2000000
-2,0.13429324999742676,pyfixest.feols (numba),2,simple,2000000
-2,1.9956312499998603,linearmodels.AbsorbingLS,2,simple,2000000
+2,4.438959167004214,pyfixest.feols (scipy),2,simple,2000000
+2,0.33693637500255136,pyfixest.feols (numba),2,simple,2000000
+2,0.3892456659959862,pyfixest.feols (rust),2,simple,2000000
+2,2.065945333997661,linearmodels.AbsorbingLS,2,simple,2000000
 2,,statsmodels.OLS,2,simple,2000000
-2,0.26596237500052666,pyfixest.feols (rust),3,simple,2000000
-2,0.2427824580008746,pyfixest.feols (numba),3,simple,2000000
-2,4.163763292002841,linearmodels.AbsorbingLS,3,simple,2000000
+2,5.456186667004658,pyfixest.feols (scipy),3,simple,2000000
+2,0.4425597090012161,pyfixest.feols (numba),3,simple,2000000
+2,0.45229695799935143,pyfixest.feols (rust),3,simple,2000000
+2,4.1964155419991584,linearmodels.AbsorbingLS,3,simple,2000000
 2,,statsmodels.OLS,3,simple,2000000
-3,0.15970487499726005,pyfixest.feols (rust),2,simple,2000000
-3,0.13389366699993843,pyfixest.feols (numba),2,simple,2000000
-3,1.9924555420002434,linearmodels.AbsorbingLS,2,simple,2000000
+3,4.416094083993812,pyfixest.feols (scipy),2,simple,2000000
+3,0.3387697500002105,pyfixest.feols (numba),2,simple,2000000
+3,0.3514265829944634,pyfixest.feols (rust),2,simple,2000000
+3,2.044460082994192,linearmodels.AbsorbingLS,2,simple,2000000
 3,,statsmodels.OLS,2,simple,2000000
-3,0.2862756659997103,pyfixest.feols (rust),3,simple,2000000
-3,0.23390137499882258,pyfixest.feols (numba),3,simple,2000000
-3,4.159189957998024,linearmodels.AbsorbingLS,3,simple,2000000
+3,5.248052708004252,pyfixest.feols (scipy),3,simple,2000000
+3,0.43574837499909336,pyfixest.feols (numba),3,simple,2000000
+3,0.45029312500264496,pyfixest.feols (rust),3,simple,2000000
+3,4.200054082997667,linearmodels.AbsorbingLS,3,simple,2000000
 3,,statsmodels.OLS,3,simple,2000000
-1,0.06614633399658487,pyfixest.feols (rust),2,simple,500000
-1,0.037639166999724694,pyfixest.feols (numba),2,simple,500000
-1,0.4760995409997122,linearmodels.AbsorbingLS,2,simple,500000
+1,1.094573959002446,pyfixest.feols (scipy),2,simple,500000
+1,0.11184349999530241,pyfixest.feols (numba),2,simple,500000
+1,0.1160159580031177,pyfixest.feols (rust),2,simple,500000
+1,0.49740312499488937,linearmodels.AbsorbingLS,2,simple,500000
 1,,statsmodels.OLS,2,simple,500000
-1,0.06502962499871501,pyfixest.feols (rust),3,simple,500000
-1,0.05940858300164109,pyfixest.feols (numba),3,simple,500000
-1,0.8901014580005722,linearmodels.AbsorbingLS,3,simple,500000
+1,1.3676289159993757,pyfixest.feols (scipy),3,simple,500000
+1,0.14049516699742526,pyfixest.feols (numba),3,simple,500000
+1,0.1377965409992612,pyfixest.feols (rust),3,simple,500000
+1,0.9060074999943026,linearmodels.AbsorbingLS,3,simple,500000
 1,,statsmodels.OLS,3,simple,500000
-2,0.03931170799842221,pyfixest.feols (rust),2,simple,500000
-2,0.03632354200090049,pyfixest.feols (numba),2,simple,500000
-2,0.4839049170004728,linearmodels.AbsorbingLS,2,simple,500000
+2,1.0709200829951442,pyfixest.feols (scipy),2,simple,500000
+2,0.11329874999501044,pyfixest.feols (numba),2,simple,500000
+2,0.11429849999694852,pyfixest.feols (rust),2,simple,500000
+2,0.4797407079968252,linearmodels.AbsorbingLS,2,simple,500000
 2,,statsmodels.OLS,2,simple,500000
-2,0.10019858399755321,pyfixest.feols (rust),3,simple,500000
-2,0.07597525000164751,pyfixest.feols (numba),3,simple,500000
-2,0.8876395420011249,linearmodels.AbsorbingLS,3,simple,500000
+2,1.3791386660013814,pyfixest.feols (scipy),3,simple,500000
+2,0.1368656250051572,pyfixest.feols (numba),3,simple,500000
+2,0.13732275000074878,pyfixest.feols (rust),3,simple,500000
+2,0.9106381660021725,linearmodels.AbsorbingLS,3,simple,500000
 2,,statsmodels.OLS,3,simple,500000
-3,0.054702207999071106,pyfixest.feols (rust),2,simple,500000
-3,0.03802558399911504,pyfixest.feols (numba),2,simple,500000
-3,0.47680016699814587,linearmodels.AbsorbingLS,2,simple,500000
+3,1.0529056250015856,pyfixest.feols (scipy),2,simple,500000
+3,0.11238212500029476,pyfixest.feols (numba),2,simple,500000
+3,0.11516450000635814,pyfixest.feols (rust),2,simple,500000
+3,0.47845808300189674,linearmodels.AbsorbingLS,2,simple,500000
 3,,statsmodels.OLS,2,simple,500000
-3,0.07309400000303867,pyfixest.feols (rust),3,simple,500000
-3,0.055920000002515735,pyfixest.feols (numba),3,simple,500000
-3,0.8845889169970178,linearmodels.AbsorbingLS,3,simple,500000
+3,1.2889850829960778,pyfixest.feols (scipy),3,simple,500000
+3,0.13624058300047182,pyfixest.feols (numba),3,simple,500000
+3,0.13685812500625616,pyfixest.feols (rust),3,simple,500000
+3,0.9054360419977456,linearmodels.AbsorbingLS,3,simple,500000
 3,,statsmodels.OLS,3,simple,500000

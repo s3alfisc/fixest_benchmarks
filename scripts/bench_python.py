@@ -155,7 +155,7 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
             ("pyfixest.feols (scipy)", "scipy", run_pyfixest_feols, False, "pyfixest_feols"),
             ("pyfixest.feols (numba)", "numba", run_pyfixest_feols, False, "pyfixest_feols"),
             ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False, "pyfixest_feols"),
-            ("linearmodels.AbsorbingLS", "absorbingls", None, True, "absorbingls"),
+            ("linearmodels.AbsorbingLS", "absorbingls", run_absorbingls, False, "absorbingls"),
             ("statsmodels.OLS", "statsmodels_ols", None, True, "statsmodels_ols"),
         ]
         formulas = {
@@ -265,14 +265,11 @@ def run_benchmark(
                 for est_name, backend_or_func, func, use_subprocess, func_name_subprocess in estimators:
                     print(f"  -> {est_name:<35} (FE={n_fe}) ... ", end="", flush=True)
 
-                    # Use subprocess timeout for difficult datasets with 3 FEs or large sample sizes
-                    use_timeout = use_subprocess or (dgp_type == "difficult" and (n_fe >= 3 or n_obs >= 1_000_000))
-
                     try:
-                        if use_timeout:
-                            # Run in subprocess with proper timeout
+                        if use_subprocess:
+                            # Run in subprocess with timeout (statsmodels only)
                             status, elapsed = run_with_timeout(
-                                func_name_subprocess, str(filepath), formula, timeout, backend_or_func if not use_subprocess else None
+                                func_name_subprocess, str(filepath), formula, timeout, None
                             )
                             if status == "timeout":
                                 print("TIMEOUT")
@@ -286,8 +283,11 @@ def run_benchmark(
                             else:
                                 print(f"{elapsed:.3f}s")
                         else:
-                            # Run in main process (for pyfixest - JIT caching on simple datasets)
-                            elapsed = func(data, formula, backend_or_func)
+                            # Run in main process
+                            if backend_or_func in ("scipy", "numba", "rust"):
+                                elapsed = func(data, formula, backend_or_func)
+                            else:
+                                elapsed = func(data, formula)
                             print(f"{elapsed:.3f}s")
 
                         # Only record non-burnin iterations
