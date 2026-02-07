@@ -76,7 +76,7 @@ jobs:
       run: |
         source .venv/bin/activate
         pip install --upgrade pip
-        pip install pandas pyfixest
+        pip install pandas "pyfixest @ git+https://github.com/py-econometrics/pyfixest.git@scipy-tol"
     
     - name: Make venv available to subsequent steps
       run: |
@@ -152,7 +152,7 @@ jobs:
         run: |
           source .venv/bin/activate
           pip install --upgrade pip
-          pip install pandas pyfixest
+          pip install pandas "pyfixest @ git+https://github.com/py-econometrics/pyfixest.git@scipy-tol"
       
       - name: Make venv available to subsequent steps
         run: |

@@ -152,8 +152,9 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
     """
     if benchmark_type == "ols":
         estimators = [
-            ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False, "pyfixest_feols"),
+            ("pyfixest.feols (scipy)", "scipy", run_pyfixest_feols, False, "pyfixest_feols"),
             ("pyfixest.feols (numba)", "numba", run_pyfixest_feols, False, "pyfixest_feols"),
+            ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False, "pyfixest_feols"),
             ("linearmodels.AbsorbingLS", "absorbingls", None, True, "absorbingls"),
             ("statsmodels.OLS", "statsmodels_ols", None, True, "statsmodels_ols"),
         ]
@@ -163,8 +164,9 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
         }
     elif benchmark_type == "poisson":
         estimators = [
-            ("pyfixest.fepois (rust)", "rust", run_pyfixest_fepois, False, "pyfixest_fepois"),
+            ("pyfixest.fepois (scipy)", "scipy", run_pyfixest_fepois, False, "pyfixest_fepois"),
             ("pyfixest.fepois (numba)", "numba", run_pyfixest_fepois, False, "pyfixest_fepois"),
+            ("pyfixest.fepois (rust)", "rust", run_pyfixest_fepois, False, "pyfixest_fepois"),
         ]
         formulas = {
             2: "negbin_y ~ x1 | indiv_id + year",
@@ -172,8 +174,9 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
         }
     elif benchmark_type == "logit":
         estimators = [
-            ("pyfixest.feglm_logit (rust)", "rust", run_pyfixest_feglm_logit, False, "pyfixest_feglm_logit"),
+            ("pyfixest.feglm_logit (scipy)", "scipy", run_pyfixest_feglm_logit, False, "pyfixest_feglm_logit"),
             ("pyfixest.feglm_logit (numba)", "numba", run_pyfixest_feglm_logit, False, "pyfixest_feglm_logit"),
+            ("pyfixest.feglm_logit (rust)", "rust", run_pyfixest_feglm_logit, False, "pyfixest_feglm_logit"),
         ]
         formulas = {
             2: "binary_y ~ x1 | indiv_id + year",

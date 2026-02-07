@@ -1,3 +1,7 @@
+# Top-level settings (override with: just force=true bench-ols)
+filter := ""
+force := "false"
+
 # Default recipe - show available commands
 default:
     @just --list
@@ -26,12 +30,12 @@ install-python:
     fi
     # Clone or update pyfixest from PR branch
     if [ ! -d "pyfixest" ]; then
-        git clone --branch feature/demean-accelerated --single-branch \
-            https://github.com/schroedk/pyfixest.git pyfixest
+        git clone --branch scipy-tol --single-branch \
+            https://github.com/py-econometrics/pyfixest.git pyfixest
     else
         cd pyfixest
         git fetch origin
-        git reset --hard origin/feature/demean-accelerated
+        git reset --hard origin/scipy-tol
         cd ..
     fi
     # Sync other dependencies first (creates .venv)
@@ -61,10 +65,10 @@ download-data:
 generate-data:
     Rscript scripts/generate_data.R
 
-# --- OLS Benchmarks (with optional filter, e.g., just bench-python-ols simple) ---
+# --- OLS Benchmarks (with optional filter, e.g., just filter=simple bench-python-ols) ---
 
-# Run Python OLS benchmarks (optional filter, force=true to rerun)
-bench-python-ols filter="" force="false":
+# Run Python OLS benchmarks
+bench-python-ols:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_python_ols.csv" ]; then
@@ -73,8 +77,8 @@ bench-python-ols filter="" force="false":
     fi
     uv run python scripts/bench_python.py --type ols --output results/bench_python_ols.csv {{ if filter != "" { "--filter " + filter } else { "" } }}
 
-# Run R OLS benchmarks (optional filter, force=true to rerun)
-bench-r-ols filter="" force="false":
+# Run R OLS benchmarks
+bench-r-ols:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_r_ols.csv" ]; then
@@ -83,8 +87,8 @@ bench-r-ols filter="" force="false":
     fi
     Rscript scripts/bench_r.R ols data/benchmark results/bench_r_ols.csv {{ filter }}
 
-# Run Julia OLS benchmarks (optional filter, force=true to rerun)
-bench-julia-ols filter="" force="false":
+# Run Julia OLS benchmarks
+bench-julia-ols:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_julia_ols.csv" ]; then
@@ -97,13 +101,13 @@ bench-julia-ols filter="" force="false":
 combine-ols:
     Rscript scripts/combine_results.R ols
 
-# Run complete OLS benchmark pipeline (optional filter, force=true to rerun)
-bench-ols filter="" force="false": generate-data (bench-python-ols filter force) (bench-r-ols filter force) (bench-julia-ols filter force) combine-ols summarize-ols
+# Run complete OLS benchmark pipeline
+bench-ols: generate-data bench-python-ols bench-r-ols bench-julia-ols combine-ols summarize-ols
 
 # --- Poisson Benchmarks ---
 
-# Run Python Poisson benchmarks (optional filter, force=true to rerun)
-bench-python-poisson filter="" force="false":
+# Run Python Poisson benchmarks
+bench-python-poisson:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_python_poisson.csv" ]; then
@@ -112,8 +116,8 @@ bench-python-poisson filter="" force="false":
     fi
     uv run python scripts/bench_python.py --type poisson --output results/bench_python_poisson.csv {{ if filter != "" { "--filter " + filter } else { "" } }}
 
-# Run R Poisson benchmarks (optional filter, force=true to rerun)
-bench-r-poisson filter="" force="false":
+# Run R Poisson benchmarks
+bench-r-poisson:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_r_poisson.csv" ]; then
@@ -122,8 +126,8 @@ bench-r-poisson filter="" force="false":
     fi
     Rscript scripts/bench_r.R poisson data/benchmark results/bench_r_poisson.csv {{ filter }}
 
-# Run Julia Poisson benchmarks (optional filter, force=true to rerun)
-bench-julia-poisson filter="" force="false":
+# Run Julia Poisson benchmarks
+bench-julia-poisson:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_julia_poisson.csv" ]; then
@@ -136,13 +140,13 @@ bench-julia-poisson filter="" force="false":
 combine-poisson:
     Rscript scripts/combine_results.R poisson
 
-# Run complete Poisson benchmark pipeline (optional filter, force=true to rerun)
-bench-poisson filter="" force="false": generate-data (bench-python-poisson filter force) (bench-r-poisson filter force) (bench-julia-poisson filter force) combine-poisson summarize-poisson
+# Run complete Poisson benchmark pipeline
+bench-poisson: generate-data bench-python-poisson bench-r-poisson bench-julia-poisson combine-poisson summarize-poisson
 
 # --- Logit Benchmarks ---
 
-# Run Python Logit benchmarks (optional filter, force=true to rerun)
-bench-python-logit filter="" force="false":
+# Run Python Logit benchmarks
+bench-python-logit:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_python_logit.csv" ]; then
@@ -151,8 +155,8 @@ bench-python-logit filter="" force="false":
     fi
     uv run python scripts/bench_python.py --type logit --output results/bench_python_logit.csv {{ if filter != "" { "--filter " + filter } else { "" } }}
 
-# Run R Logit benchmarks (optional filter, force=true to rerun)
-bench-r-logit filter="" force="false":
+# Run R Logit benchmarks
+bench-r-logit:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_r_logit.csv" ]; then
@@ -161,8 +165,8 @@ bench-r-logit filter="" force="false":
     fi
     Rscript scripts/bench_r.R logit data/benchmark results/bench_r_logit.csv {{ filter }}
 
-# Run Julia Logit benchmarks (optional filter, force=true to rerun)
-bench-julia-logit filter="" force="false":
+# Run Julia Logit benchmarks
+bench-julia-logit:
     #!/usr/bin/env bash
     set -euo pipefail
     if [ "{{force}}" = "false" ] && [ -f "results/bench_julia_logit.csv" ]; then
@@ -175,19 +179,19 @@ bench-julia-logit filter="" force="false":
 combine-logit:
     Rscript scripts/combine_results.R logit
 
-# Run complete Logit benchmark pipeline (optional filter, force=true to rerun)
-bench-logit filter="" force="false": generate-data (bench-python-logit filter force) (bench-r-logit filter force) (bench-julia-logit filter force) combine-logit summarize-logit
+# Run complete Logit benchmark pipeline
+bench-logit: generate-data bench-python-logit bench-r-logit bench-julia-logit combine-logit summarize-logit
 
 # --- All Benchmarks ---
 
-# Run all simulated data benchmarks (force=true to rerun existing)
-bench-all filter="" force="false": (bench-ols filter force) (bench-poisson filter force) (bench-logit filter force)
+# Run all simulated data benchmarks
+bench-all: bench-ols bench-poisson bench-logit
 
 # Combine all results from all languages
 combine-all: combine-ols combine-poisson combine-logit
 
-# Full benchmark run (generate data, run all benchmarks, force=true to rerun existing)
-run-all filter="" force="false": generate-data (bench-all filter force)
+# Full benchmark run (generate data, run all benchmarks)
+run-all: generate-data bench-all
 
 # Summarize all benchmark results
 summarize:
