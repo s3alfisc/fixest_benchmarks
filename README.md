@@ -178,8 +178,8 @@ base_dgp <- function(
 
 ### OLS Results
 
-![OLS Benchmark Results](results/plot_ols.svg)
+![OLS Benchmark Results](results/plot_ols.svg?v=2)
 
 ### Poisson Results
 
-![Poisson Benchmark Results](results/plot_poisson.svg)
+![Poisson Benchmark Results](results/plot_poisson.svg?v=2)
