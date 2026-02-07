@@ -183,11 +183,3 @@ base_dgp <- function(
 ### Poisson Results
 
 ![Poisson Benchmark Results](results/plot_poisson.svg)
-
-### Logistic Results
-
-![Logistic Benchmark Results](results/plot_logit.svg)
-
-### Real Data
-
-tba
