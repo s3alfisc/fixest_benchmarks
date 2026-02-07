@@ -315,7 +315,7 @@ def run_benchmark(
 
                     except Exception as e:
                         error_msg = str(e).lower()
-                        if any(x in error_msg for x in ["svd", "singular", "convergence"]):
+                        if any(x in error_msg for x in ["svd", "singular", "convergence", "demeaning"]):
                             print("NUMERICAL_ERROR")
                         else:
                             print(f"ERROR: {e}")

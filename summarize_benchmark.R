@@ -141,26 +141,44 @@ custom_theme <- function(
   return(custom_theme)
 }
 
-# Color scheme ----
+# Color scheme (grouped by language) ----
 color_switch <- c(
-  "fixest::feols" = "#5C4CBF",
-  "fixest::fepois" = "#5C4CBF",
-  "fixest::feglm_logit" = "#5C4CBF",
-  "pyfixest.feols (scipy)" = "#FF7043",
-  "pyfixest.feols (rust)" = "#2DB25F",
-  "pyfixest.feols (numba)" = "#1E88E5",
-  "pyfixest.fepois (scipy)" = "#FF7043",
-  "pyfixest.fepois (rust)" = "#2DB25F",
-  "pyfixest.fepois (numba)" = "#1E88E5",
-  "pyfixest.feglm_logit (scipy)" = "#FF7043",
-  "pyfixest.feglm_logit (rust)" = "#2DB25F",
-  "pyfixest.feglm_logit (numba)" = "#1E88E5",
-  "FixedEffectModels.reg" = "#0188AC",
-  "GLFixedEffectModels Logit" = "#0188AC",
-  "GLFixedEffectModels Poisson" = "#0188AC",
-  "lfe::felm" = "#ffc517",
-  "linearmodels.AbsorbingLS" = "#000000",
-  "statsmodels.OLS" = "#9E9E9E"
+  # R (blues)
+  "fixest::feols" = "#1565C0",
+  "fixest::fepois" = "#1565C0",
+  "fixest::feglm_logit" = "#1565C0",
+  "lfe::felm" = "#64B5F6",
+  # pyfixest (greens)
+  "pyfixest.feols (numba)" = "#43A047",
+  "pyfixest.feols (rust)" = "#2E7D32",
+  "pyfixest.feols (scipy)" = "#A5D6A7",
+  "pyfixest.fepois (numba)" = "#43A047",
+  "pyfixest.fepois (rust)" = "#2E7D32",
+  "pyfixest.fepois (scipy)" = "#A5D6A7",
+  "pyfixest.feglm_logit (numba)" = "#43A047",
+  "pyfixest.feglm_logit (rust)" = "#2E7D32",
+  "pyfixest.feglm_logit (scipy)" = "#A5D6A7",
+  # Python other (reds/oranges)
+  "linearmodels.AbsorbingLS" = "#E53935",
+  "statsmodels.OLS" = "#FF7043",
+  # Julia (yellows)
+  "FixedEffectModels.reg" = "#FFB300",
+  "GLFixedEffectModels Logit" = "#FFB300",
+  "GLFixedEffectModels Poisson" = "#FFB300"
+)
+
+# Legend order (grouped by language)
+legend_order <- c(
+  # R
+  "lfe::felm",
+  # pyfixest
+  "pyfixest.feols (numba)", "pyfixest.feols (rust)", "pyfixest.feols (scipy)",
+  "pyfixest.fepois (numba)", "pyfixest.fepois (rust)", "pyfixest.fepois (scipy)",
+  "pyfixest.feglm_logit (numba)", "pyfixest.feglm_logit (rust)", "pyfixest.feglm_logit (scipy)",
+  # Python other
+  "linearmodels.AbsorbingLS", "statsmodels.OLS",
+  # Julia
+  "FixedEffectModels.reg", "GLFixedEffectModels Logit", "GLFixedEffectModels Poisson"
 )
 
 dgp_labels <- c("simple" = "Simple", "difficult" = "Difficult")
@@ -202,6 +220,10 @@ create_benchmark_plot <- function(data, title_suffix = "") {
   # Remove fixest itself (always 1.0)
   summ <- summ[!grepl("^fixest::", est_name)]
 
+  # Order legend by language group
+  present_levels <- intersect(legend_order, unique(summ$est_name))
+  summ[, est_name := factor(est_name, levels = present_levels)]
+
   # Prepare baseline labels for annotation
   baseline_labels <- baseline[, .(dgp_name, n_fe, n_obs, baseline_time)]
   baseline_labels[, dgp_label := factor(
@@ -218,7 +240,7 @@ create_benchmark_plot <- function(data, title_suffix = "") {
 
   summ |>
     ggplot() +
-    geom_hline(yintercept = 1, linetype = "dashed", color = "#5C4CBF", linewidth = 0.7) +
+    geom_hline(yintercept = 1, linetype = "dashed", color = "#1565C0", linewidth = 0.7) +
     geom_point(
       aes(x = n_obs, y = slowdown, color = est_name),
       size = 2, shape = 15
@@ -230,7 +252,7 @@ create_benchmark_plot <- function(data, title_suffix = "") {
     geom_label(
       data = baseline_labels,
       aes(x = n_obs, y = 1, label = time_label),
-      vjust = 1.3, size = 2.2, color = "#5C4CBF",
+      vjust = 1.3, size = 2.2, color = "#1565C0",
       fill = "white", label.size = 0, label.padding = unit(1, "pt")
     ) +
     facet_grid(dgp_label ~ n_fe_label) +
@@ -248,7 +270,7 @@ create_benchmark_plot <- function(data, title_suffix = "") {
       x = "Number of Observations",
       y = "Slowdown vs fixest",
       color = NULL,
-      caption = "Dashed line = fixest (1x). Values >1x are slower. Missing points indicate failures."
+      caption = "Dashed blue line = fixest (1x). Values >1x are slower. Missing points indicate failures."
     ) +
     custom_theme(legend = "bottom")
 }
