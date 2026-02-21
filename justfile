@@ -18,6 +18,11 @@ install-r:
 reinstall-fixest-source:
     Rscript -e 'renv::remove("fixest"); renv::install("fixest", type="source")'
 
+# Reinstall lfe and alpaca from source within renv
+reinstall-lfe-alpaca-source:
+    Rscript -e 'renv::remove("lfe"); renv::install("lfe", type="source")'
+    Rscript -e 'renv::remove("alpaca"); renv::install("alpaca", type="source")'
+
 # Install Python packages using uv
 install-python:
     #!/usr/bin/env bash
@@ -54,7 +59,7 @@ install-julia:
     julia --project=. -e 'import Pkg; Pkg.instantiate()'
 
 # Full setup: all languages
-setup: install-r reinstall-fixest-source install-python install-julia
+setup: install-r reinstall-fixest-source reinstall-lfe-alpaca-source install-python install-julia
 
 # Download real-world benchmark datasets
 download-data:
