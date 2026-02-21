@@ -14,6 +14,10 @@ system-info:
 install-r:
     Rscript -e 'renv::restore()'
 
+# Reinstall fixest from source within renv
+reinstall-fixest-source:
+    Rscript -e 'renv::remove("fixest"); renv::install("fixest", type="source")'
+
 # Install Python packages using uv
 install-python:
     #!/usr/bin/env bash
@@ -50,7 +54,7 @@ install-julia:
     julia --project=. -e 'import Pkg; Pkg.instantiate()'
 
 # Full setup: all languages
-setup: install-r install-python install-julia
+setup: install-r reinstall-fixest-source install-python install-julia
 
 # Download real-world benchmark datasets
 download-data:
