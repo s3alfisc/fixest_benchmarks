@@ -7,11 +7,9 @@ library(fixest)
 library(lfe)
 library(alpaca)
 library(here)
-library(R.utils)
 
 # Configuration
 N_THREADS <- 8L
-TIMEOUT_SECS <- 60L
 options(lfe.threads = N_THREADS)
 setFixest_nthreads(N_THREADS)
 
@@ -31,7 +29,7 @@ feols_timer <- function(data, fml, nthreads = N_THREADS) {
 
 fepois_timer <- function(data, fml) {
   start_time <- Sys.time()
-  result <- fepois(fml, data = data, notes = FALSE, warn = FALSE)
+  result <- fepois(fml, data = data)
   as.numeric(Sys.time() - start_time, units = "secs")
 }
 
@@ -199,12 +197,7 @@ run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern 
           flush.console()
 
           elapsed <- tryCatch({
-            withTimeout({
-              func(data, fml)
-            }, timeout = TIMEOUT_SECS, onTimeout = "silent")
-          }, TimeoutException = function(e) {
-            cat("TIMEOUT\n")
-            NA_real_
+            func(data, fml)
           }, error = function(e) {
             cat(sprintf("ERROR: %s\n", conditionMessage(e)))
             NA_real_
