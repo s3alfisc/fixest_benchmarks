@@ -232,6 +232,9 @@ run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern 
           } else {
             fml <- fml_config$fixest
           }
+          if (is.character(fml)) {
+            fml <- as.formula(fml)
+          }
 
           cat(sprintf("  -> %-35s (FE=%d) ... ", est_name, n_fe))
           flush.console()
