@@ -1,0 +1,134 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Benchmark Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "threads": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "r": { "type": "integer", "minimum": 1 },
+        "julia": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "timeout_secs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "python": { "type": "integer", "minimum": 1 },
+        "julia": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "python_timeout_estimators": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "iterations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "n_iters": { "type": "integer", "minimum": 1 },
+        "burn_in": { "type": "integer", "minimum": 0 }
+      },
+      "required": ["n_iters", "burn_in"]
+    },
+    "formulas": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ols": { "$ref": "#/definitions/formula_group" },
+        "poisson": { "$ref": "#/definitions/formula_group" },
+        "logit": { "$ref": "#/definitions/formula_group" }
+      }
+    },
+    "datasets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "n": { "type": "integer", "minimum": 1 },
+          "type": { "type": "string", "enum": ["simple", "difficult"] }
+        },
+        "required": ["name", "n", "type"]
+      }
+    },
+    "datasets_by_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ols": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "poisson": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "logit": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "real_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "parquet": { "type": "string", "minLength": 1 },
+          "n_iters": { "type": "integer", "minimum": 1 },
+          "n_fe": { "type": "integer", "minimum": 1 },
+          "formulas": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "ols": { "$ref": "#/definitions/real_formula_set" },
+              "poisson": { "$ref": "#/definitions/real_formula_set" },
+              "logit": { "$ref": "#/definitions/real_formula_set" }
+            }
+          }
+        },
+        "required": ["name", "parquet", "n_iters", "n_fe", "formulas"]
+      }
+    }
+  },
+  "definitions": {
+    "formula_group": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "2": { "$ref": "#/definitions/formula_set" },
+        "3": { "$ref": "#/definitions/formula_set" }
+      }
+    },
+    "formula_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "python": { "type": "string", "minLength": 1 },
+        "r_fixest": { "type": "string", "minLength": 1 },
+        "r_lfe": { "type": "string", "minLength": 1 },
+        "r_alpaca": { "type": "string", "minLength": 1 },
+        "julia": { "type": "string", "minLength": 1 }
+      }
+    },
+    "real_formula_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "r": { "type": "string", "minLength": 1 },
+        "python": { "type": "string", "minLength": 1 },
+        "julia": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

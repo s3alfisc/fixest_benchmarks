@@ -11,9 +11,55 @@ using CSV
 using StatsModels
 using FixedEffectModels
 using GLFixedEffectModels
+using JSON3
 
-const N_THREADS = 8
-const TIMEOUT_SECS = 60
+function load_config(path::String)
+    if isfile(path)
+        return JSON3.read(read(path, String))
+    end
+    return nothing
+end
+
+function get_nested(config, keys::Vector{String}, default)
+    cur = config
+    for k in keys
+        if cur === nothing || !haskey(cur, k)
+            return default
+        end
+        cur = cur[k]
+    end
+    return cur
+end
+
+const CONFIG = load_config("config/bench.json")
+const N_THREADS = Int(get_nested(CONFIG, ["threads", "julia"], 8))
+const TIMEOUT_SECS = Int(get_nested(CONFIG, ["timeout_secs", "julia"], 60))
+
+function get_formulas_from_config(benchmark_type::String)
+    if CONFIG === nothing || !haskey(CONFIG, "formulas") || !haskey(CONFIG["formulas"], benchmark_type)
+        return nothing
+    end
+    cfg = CONFIG["formulas"][benchmark_type]
+    out = Vector{Tuple{Int, String}}()
+    for n_fe_str in keys(cfg)
+        entry = cfg[n_fe_str]
+        if haskey(entry, "julia")
+            push!(out, (parse(Int, n_fe_str), String(entry["julia"])))
+        end
+    end
+    if isempty(out)
+        return nothing
+    end
+    sort!(out, by = x -> x[1])
+    return out
+end
+
+function get_allowed_datasets(benchmark_type::String)
+    if CONFIG === nothing || !haskey(CONFIG, "datasets_by_type") || !haskey(CONFIG["datasets_by_type"], benchmark_type)
+        return nothing
+    end
+    return Set(String.(CONFIG["datasets_by_type"][benchmark_type]))
+end
 
 # Timeout wrapper function
 function with_timeout(f::Function, timeout::Int)
@@ -66,7 +112,8 @@ function parse_dataset_name(name::String)
         "100k" => 100_000,
         "500k" => 500_000,
         "1m" => 1_000_000,
-        "2m" => 2_000_000
+        "2m" => 2_000_000,
+        "5m" => 5_000_000
     )
     parts = split(name, "_")
     dgp_type = parts[1]
@@ -81,26 +128,35 @@ function get_config(benchmark_type::String)
         estimators = [
             ("FixedEffectModels.reg", feols_timer),
         ]
-        formulas = [
-            (2, "y ~ x1 + fe(indiv_id) + fe(year)"),
-            (3, "y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)"),
-        ]
+        formulas = get_formulas_from_config(benchmark_type)
+        if formulas === nothing
+            formulas = [
+                (2, "y ~ x1 + fe(indiv_id) + fe(year)"),
+                (3, "y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)"),
+            ]
+        end
     elseif benchmark_type == "poisson"
         estimators = [
             ("GLFixedEffectModels Poisson", fepois_timer),
         ]
-        formulas = [
-            (2, "negbin_y ~ x1 + fe(indiv_id) + fe(year)"),
-            (3, "negbin_y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)"),
-        ]
+        formulas = get_formulas_from_config(benchmark_type)
+        if formulas === nothing
+            formulas = [
+                (2, "negbin_y ~ x1 + fe(indiv_id) + fe(year)"),
+                (3, "negbin_y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)"),
+            ]
+        end
     elseif benchmark_type == "logit"
         estimators = [
             ("GLFixedEffectModels Logit", feglm_logit_timer),
         ]
-        formulas = [
-            (2, "binary_y ~ x1 + fe(indiv_id) + fe(year)"),
-            (3, "binary_y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)"),
-        ]
+        formulas = get_formulas_from_config(benchmark_type)
+        if formulas === nothing
+            formulas = [
+                (2, "binary_y ~ x1 + fe(indiv_id) + fe(year)"),
+                (3, "binary_y ~ x1 + fe(indiv_id) + fe(year) + fe(firm_id)"),
+            ]
+        end
     else
         error("Unknown benchmark type: $benchmark_type")
     end
@@ -109,6 +165,7 @@ end
 
 function run_benchmark(data_dir::String, output_file::String, benchmark_type::String, filter_pattern::Union{String, Nothing}=nothing)
     estimators, formulas = get_config(benchmark_type)
+    allowed_datasets = get_allowed_datasets(benchmark_type)
 
     # Get all parquet files
     parquet_files = sort(filter(f -> endswith(f, ".parquet"), readdir(data_dir, join=true)))
@@ -128,6 +185,9 @@ function run_benchmark(data_dir::String, output_file::String, benchmark_type::St
 
         # Apply filter if specified
         if filter_pattern !== nothing && !occursin(filter_pattern, ds_name)
+            continue
+        end
+        if allowed_datasets !== nothing && !(ds_name in allowed_datasets)
             continue
         end
 

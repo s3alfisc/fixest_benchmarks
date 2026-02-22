@@ -307,15 +307,15 @@ process_benchmark <- function(type) {
 }
 
 # Process real data benchmark
-process_real_data <- function() {
-  csv_file <- here("results/bench_ols_real_data.csv")
+process_real_data <- function(benchmark_type = "ols") {
+  csv_file <- here(sprintf("results/bench_%s_real_data.csv", benchmark_type))
 
   if (!file.exists(csv_file)) {
-    cat("Skipping real_data: results/bench_ols_real_data.csv not found\n")
+    cat(sprintf("Skipping real_data (%s): %s not found\n", benchmark_type, csv_file))
     return(invisible(NULL))
   }
 
-  cat("Processing real_data benchmark...\n")
+  cat(sprintf("Processing real_data benchmark (%s)...\n", benchmark_type))
   bench_real_data <- fread(csv_file)
 
   summ_real_data <- bench_real_data |>
@@ -346,7 +346,8 @@ process_real_data <- function() {
     unlist()
 
   readme <- xfun::read_utf8(here("README.md"))
-  insert_idx <- which(grepl("<!-- Real Data -->", readme))
+  marker <- sprintf("<!-- Real Data %s -->", toupper(benchmark_type))
+  insert_idx <- which(grepl(marker, readme))
   if (length(insert_idx) >= 2 && insert_idx[2] > insert_idx[1] + 1) {
     rows_to_keep <- setdiff(
       seq_len(length(readme)),
@@ -367,8 +368,8 @@ process_real_data <- function() {
     strsplit("\n") |>
     unlist()
 
-  cat(tab_latex_string, file = here("results/table_real_data.tex"), sep = "\n")
-  cat("  -> Saved results/table_real_data.tex\n")
+  cat(tab_latex_string, file = here(sprintf("results/table_real_data_%s.tex", benchmark_type)), sep = "\n")
+  cat(sprintf("  -> Saved results/table_real_data_%s.tex\n", benchmark_type))
 }
 
 # Main execution
@@ -381,9 +382,13 @@ if (benchmark_type == "all") {
   process_benchmark("ols")
   process_benchmark("poisson")
   process_benchmark("logit")
-  process_real_data()
+  process_real_data("ols")
+  process_real_data("poisson")
+  process_real_data("logit")
 } else if (benchmark_type == "real_data") {
-  process_real_data()
+  process_real_data("ols")
+  process_real_data("poisson")
+  process_real_data("logit")
 } else {
   process_benchmark(benchmark_type)
 }

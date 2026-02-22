@@ -7,6 +7,7 @@ Uses multiprocessing for proper timeout of slow estimators (statsmodels, linearm
 
 import argparse
 import csv
+import json
 import multiprocessing as mp
 import sys
 import time
@@ -145,7 +146,32 @@ def run_with_timeout(func_name: str, data_path: str, formula: str, timeout: int,
 # Benchmark configuration
 # =============================================================================
 
-def get_estimators(benchmark_type: str) -> list[tuple]:
+def load_config(config_path: Path) -> dict:
+    if not config_path.exists():
+        return {}
+    with open(config_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def get_formulas_from_config(config: dict, benchmark_type: str) -> dict[int, str] | None:
+    formulas_cfg = config.get("formulas", {}).get(benchmark_type, {})
+    if not formulas_cfg:
+        return None
+    formulas = {}
+    for n_fe_str, entry in formulas_cfg.items():
+        if "python" in entry:
+            formulas[int(n_fe_str)] = entry["python"]
+    return formulas or None
+
+
+def get_allowed_datasets(config: dict, benchmark_type: str) -> set[str] | None:
+    allowed = config.get("datasets_by_type", {}).get(benchmark_type)
+    if not allowed:
+        return None
+    return set(allowed)
+
+
+def get_estimators(benchmark_type: str, timeout_estimators: set[str]) -> list[tuple]:
     """Get estimators and formulas for benchmark type.
 
     Returns: list of (name, backend/func_str, func, use_subprocess, func_name_for_subprocess)
@@ -155,8 +181,20 @@ def get_estimators(benchmark_type: str) -> list[tuple]:
             ("pyfixest.feols (scipy)", "scipy", run_pyfixest_feols, False, "pyfixest_feols"),
             ("pyfixest.feols (numba)", "numba", run_pyfixest_feols, False, "pyfixest_feols"),
             ("pyfixest.feols (rust)", "rust", run_pyfixest_feols, False, "pyfixest_feols"),
-            ("linearmodels.AbsorbingLS", "absorbingls", run_absorbingls, False, "absorbingls"),
-            ("statsmodels.OLS", "statsmodels_ols", None, True, "statsmodels_ols"),
+            (
+                "linearmodels.AbsorbingLS",
+                "absorbingls",
+                run_absorbingls,
+                "linearmodels.AbsorbingLS" in timeout_estimators,
+                "absorbingls",
+            ),
+            (
+                "statsmodels.OLS",
+                "statsmodels_ols",
+                run_statsmodels_ols,
+                "statsmodels.OLS" in timeout_estimators,
+                "statsmodels_ols",
+            ),
         ]
         formulas = {
             2: "y ~ x1 | indiv_id + year",
@@ -197,6 +235,7 @@ def parse_dataset_name(name: str) -> tuple[str, int]:
         "500k": 500_000,
         "1m": 1_000_000,
         "2m": 2_000_000,
+        "5m": 5_000_000,
     }
     parts = name.rsplit("_", 1)
     dgp_type = parts[0]
@@ -215,9 +254,16 @@ def run_benchmark(
     benchmark_type: str,
     timeout: int = 60,
     filter_pattern: str | None = None,
+    timeout_estimators: set[str] | None = None,
+    formulas_override: dict[int, str] | None = None,
+    allowed_datasets: set[str] | None = None,
 ) -> None:
     """Run benchmarks on all datasets in data_dir."""
-    estimators, formulas = get_estimators(benchmark_type)
+    if timeout_estimators is None:
+        timeout_estimators = set()
+    estimators, formulas = get_estimators(benchmark_type, timeout_estimators)
+    if formulas_override:
+        formulas = formulas_override
 
     # Get all parquet files
     parquet_files = sorted(data_dir.glob("*.parquet"))
@@ -236,6 +282,8 @@ def run_benchmark(
             iter_num = int(parts[2])
             # Apply filter if specified
             if filter_pattern and filter_pattern not in ds_name:
+                continue
+            if allowed_datasets is not None and ds_name not in allowed_datasets:
                 continue
             datasets[ds_name].append((iter_type, iter_num, f))
 
@@ -382,7 +430,24 @@ def main():
     )
     args = parser.parse_args()
 
-    run_benchmark(args.data_dir, args.output, args.type, args.timeout, args.filter)
+    config = load_config(Path("config/bench.json"))
+    timeout_secs = config.get("timeout_secs", {}).get("python", args.timeout)
+    timeout_estimators = set(config.get("python_timeout_estimators", []))
+    if not timeout_estimators:
+        timeout_estimators = {"linearmodels.AbsorbingLS", "statsmodels.OLS"}
+    formulas_override = get_formulas_from_config(config, args.type)
+    allowed_datasets = get_allowed_datasets(config, args.type)
+
+    run_benchmark(
+        args.data_dir,
+        args.output,
+        args.type,
+        timeout_secs,
+        args.filter,
+        timeout_estimators,
+        formulas_override,
+        allowed_datasets,
+    )
 
 
 if __name__ == "__main__":

@@ -7,3 +7,5 @@ data/Medicare_Provider_Util_Payment_PUF_CY2016.txt
 # cloned pyfixest for building
 pyfixest/
 .venv/
+.r_local/
+data/real/

@@ -7,11 +7,43 @@ library(fixest)
 library(lfe)
 library(alpaca)
 library(here)
+library(jsonlite)
 
 # Configuration
-N_THREADS <- 8L
+config_path <- here("config", "bench.json")
+config <- if (file.exists(config_path)) fromJSON(config_path) else list()
+N_THREADS <- if (!is.null(config$threads$r)) as.integer(config$threads$r) else 8L
 options(lfe.threads = N_THREADS)
 setFixest_nthreads(N_THREADS)
+
+get_formulas_from_config <- function(type) {
+  formulas_cfg <- config$formulas[[type]]
+  if (is.null(formulas_cfg)) {
+    return(NULL)
+  }
+  out <- list()
+  for (n_fe_name in names(formulas_cfg)) {
+    entry <- formulas_cfg[[n_fe_name]]
+    if (!is.null(entry$r_fixest)) {
+      out[[length(out) + 1L]] <- list(
+        n_fe = as.integer(n_fe_name),
+        fixest = entry$r_fixest,
+        lfe = entry$r_lfe,
+        alpaca = entry$r_alpaca
+      )
+    }
+  }
+  if (length(out) == 0L) return(NULL)
+  out
+}
+
+get_allowed_datasets <- function(type) {
+  allowed <- config$datasets_by_type[[type]]
+  if (is.null(allowed) || length(allowed) == 0) {
+    return(NULL)
+  }
+  allowed
+}
 
 # Parse command line arguments
 args <- commandArgs(trailingOnly = TRUE)
@@ -54,33 +86,36 @@ alpaca_poisson_timer <- function(data, fml) {
 # Define estimators and formulas by benchmark type
 get_estimators <- function(type) {
   if (type == "ols") {
+    formulas_cfg <- get_formulas_from_config(type)
     list(
       estimators = list(
         list(name = "fixest::feols", func = feols_timer),
         list(name = "lfe::felm", func = lfe_timer)
       ),
-      formulas = list(
+      formulas = if (!is.null(formulas_cfg)) formulas_cfg else list(
         list(n_fe = 2L, fixest = y ~ x1 | indiv_id + year, lfe = y ~ x1 | indiv_id + year),
         list(n_fe = 3L, fixest = y ~ x1 | indiv_id + year + firm_id, lfe = y ~ x1 | indiv_id + year + firm_id)
       )
     )
   } else if (type == "poisson") {
+    formulas_cfg <- get_formulas_from_config(type)
     list(
       estimators = list(
         list(name = "fixest::fepois", func = fepois_timer),
         list(name = "alpaca::feglm", func = alpaca_poisson_timer)
       ),
-      formulas = list(
+      formulas = if (!is.null(formulas_cfg)) formulas_cfg else list(
         list(n_fe = 2L, fixest = negbin_y ~ x1 | indiv_id + year, alpaca = negbin_y ~ x1 | indiv_id + year),
         list(n_fe = 3L, fixest = negbin_y ~ x1 | indiv_id + year + firm_id, alpaca = negbin_y ~ x1 | indiv_id + year + firm_id)
       )
     )
   } else if (type == "logit") {
+    formulas_cfg <- get_formulas_from_config(type)
     list(
       estimators = list(
         list(name = "fixest::feglm_logit", func = feglm_logit_timer)
       ),
-      formulas = list(
+      formulas = if (!is.null(formulas_cfg)) formulas_cfg else list(
         list(n_fe = 2L, fixest = binary_y ~ x1 | indiv_id + year),
         list(n_fe = 3L, fixest = binary_y ~ x1 | indiv_id + year + firm_id)
       )
@@ -98,7 +133,8 @@ parse_dataset_name <- function(name) {
     "100k" = 100000L,
     "500k" = 500000L,
     "1m" = 1000000L,
-    "2m" = 2000000L
+    "2m" = 2000000L,
+    "5m" = 5000000L
   )
   parts <- strsplit(name, "_")[[1]]
   dgp_type <- parts[1]
@@ -110,6 +146,7 @@ parse_dataset_name <- function(name) {
 # Main benchmark function
 run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern = NULL) {
   config <- get_estimators(benchmark_type)
+  allowed_datasets <- get_allowed_datasets(benchmark_type)
 
   # Get all parquet files
   parquet_files <- sort(list.files(data_dir, pattern = "\\.parquet$", full.names = TRUE))
@@ -130,6 +167,9 @@ run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern 
 
     # Apply filter if specified
     if (!is.null(filter_pattern) && !grepl(filter_pattern, ds_name)) {
+      next
+    }
+    if (!is.null(allowed_datasets) && !(ds_name %in% allowed_datasets)) {
       next
     }
 
@@ -186,9 +226,9 @@ run_benchmark <- function(data_dir, output_file, benchmark_type, filter_pattern 
 
           # Get appropriate formula
           if (grepl("lfe", est_name)) {
-            fml <- fml_config$lfe
+            fml <- if (!is.null(fml_config$lfe)) fml_config$lfe else fml_config$fixest
           } else if (grepl("alpaca", est_name)) {
-            fml <- fml_config$alpaca
+            fml <- if (!is.null(fml_config$alpaca)) fml_config$alpaca else fml_config$fixest
           } else {
             fml <- fml_config$fixest
           }

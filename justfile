@@ -10,9 +10,25 @@ default:
 system-info:
     Rscript scripts/system_info.R
 
-# Install R packages via renv
+# Install R packages via renv (then rebuild selected packages from source)
 install-r:
-    Rscript -e 'renv::restore()'
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v gfortran >/dev/null 2>&1; then
+        echo "Error: gfortran not found. Install GCC (e.g., 'brew install gcc') to build alpaca from source."
+        exit 1
+    fi
+    libgfortran_path="$(gfortran -print-file-name=libgfortran.dylib 2>/dev/null || true)"
+    if [ -z "$libgfortran_path" ] || [ "$libgfortran_path" = "libgfortran.dylib" ]; then
+        echo "Error: libgfortran not found via gfortran. Ensure GCC is installed and visible in PATH."
+        exit 1
+    fi
+    libdir="$(cd "$(dirname "$libgfortran_path")" && pwd)"
+    makevars_dir=".r_local"
+    mkdir -p "$makevars_dir"
+    printf "FLIBS = -L%s -lgfortran -lquadmath\nLDFLAGS = -L%s\n" "$libdir" "$libdir" > "$makevars_dir/Makevars"
+    R_MAKEVARS_USER="$(pwd)/$makevars_dir/Makevars" Rscript -e 'renv::restore()'
+    R_MAKEVARS_USER="$(pwd)/$makevars_dir/Makevars" Rscript -e 'renv::install(c("fixest", "lfe", "alpaca"), type="source")'
 
 # Reinstall fixest from source within renv
 reinstall-fixest-source:
@@ -65,6 +81,10 @@ setup: install-r reinstall-fixest-source reinstall-lfe-alpaca-source install-pyt
 download-data:
     Rscript data/download_taxi.R
     Rscript data/download_medicare_payments.R
+
+# Prepare real-world datasets (download + parquet)
+prepare-real-data:
+    Rscript scripts/prepare_real_data.R
 
 # =============================================================================
 # NEW ISOLATED BENCHMARK ARCHITECTURE
@@ -221,3 +241,102 @@ summarize-logit:
 # Summarize real data benchmark results only
 summarize-real-data:
     Rscript summarize_benchmark.R real_data
+
+# Real-data benchmarks (OLS only)
+bench-real-r:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_r.csv" ]; then
+        echo "Skipping: results/bench_real_data_r.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    Rscript scripts/bench_real_data_r.R ols
+
+bench-real-python:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_python.csv" ]; then
+        echo "Skipping: results/bench_real_data_python.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    uv run python scripts/bench_real_data_python.py --type ols
+
+bench-real-julia:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_julia.csv" ]; then
+        echo "Skipping: results/bench_real_data_julia.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    julia -t 8 --project=. scripts/bench_real_data_julia.jl ols
+
+combine-real-data:
+    Rscript scripts/combine_real_data.R ols
+
+bench-real-ols: prepare-real-data bench-real-r bench-real-python bench-real-julia combine-real-data summarize-real-data
+
+bench-real-r-poisson:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_poisson_r.csv" ]; then
+        echo "Skipping: results/bench_real_data_poisson_r.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    Rscript scripts/bench_real_data_r.R poisson
+
+bench-real-python-poisson:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_poisson_python.csv" ]; then
+        echo "Skipping: results/bench_real_data_poisson_python.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    uv run python scripts/bench_real_data_python.py --type poisson
+
+bench-real-julia-poisson:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_poisson_julia.csv" ]; then
+        echo "Skipping: results/bench_real_data_poisson_julia.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    julia -t 8 --project=. scripts/bench_real_data_julia.jl poisson
+
+combine-real-data-poisson:
+    Rscript scripts/combine_real_data.R poisson
+
+bench-real-poisson: prepare-real-data bench-real-r-poisson bench-real-python-poisson bench-real-julia-poisson combine-real-data-poisson summarize-real-data
+
+bench-real-r-logit:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_logit_r.csv" ]; then
+        echo "Skipping: results/bench_real_data_logit_r.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    Rscript scripts/bench_real_data_r.R logit
+
+bench-real-python-logit:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_logit_python.csv" ]; then
+        echo "Skipping: results/bench_real_data_logit_python.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    uv run python scripts/bench_real_data_python.py --type logit
+
+bench-real-julia-logit:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ "{{force}}" = "false" ] && [ -f "results/bench_real_data_logit_julia.csv" ]; then
+        echo "Skipping: results/bench_real_data_logit_julia.csv exists (use force=true to rerun)"
+        exit 0
+    fi
+    julia -t 8 --project=. scripts/bench_real_data_julia.jl logit
+
+combine-real-data-logit:
+    Rscript scripts/combine_real_data.R logit
+
+bench-real-logit: prepare-real-data bench-real-r-logit bench-real-python-logit bench-real-julia-logit combine-real-data-logit summarize-real-data
+
+bench-real-all: bench-real-ols bench-real-poisson bench-real-logit

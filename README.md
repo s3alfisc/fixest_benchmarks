@@ -35,6 +35,7 @@ You need the following installed on your system:
 - **Julia** (>= 1.11)
 - **[just](https://github.com/casey/just)** - command runner
 - **[uv](https://github.com/astral-sh/uv)** - Python package manager
+- **gfortran** (via GCC) for building `alpaca` from source (macOS: `brew install gcc`)
 
 ### Installation
 
@@ -46,6 +47,7 @@ just setup
 
 This runs:
 - `renv::restore()` to install R packages from `renv.lock`
+- `renv::install(c("fixest", "lfe", "alpaca"), type="source")` to build multithreaded packages from source
 - `uv sync` to install Python packages from `pyproject.toml`
 - `Pkg.instantiate()` to install Julia packages from `Project.toml`
 
@@ -107,6 +109,20 @@ just filter=simple force=true bench-ols # Combined with force rerun
 ```
 
 Run `just` to see all available commands.
+
+#### Configuration
+
+Shared benchmark configuration lives in `config/bench.json`, including:
+- Dataset list and sizes
+- Per-benchmark dataset inclusion
+- Iterations and burn-in
+- Per-language thread counts
+- Per-language timeouts
+- Python timeout-only estimators
+- Per-language formulas
+- Real-data benchmarks (datasets, formulas, iterations)
+
+Schema: `config/bench.schema.json` documents the expected structure.
 
 ## Simulation DGP
 
@@ -183,3 +199,29 @@ base_dgp <- function(
 ### Poisson Results
 
 ![Poisson Benchmark Results](results/plot_poisson.svg?v=2)
+
+## Real-Data Benchmarks
+
+Real-data benchmarks are run on demand and cached locally. Data files are downloaded
+once and stored under `data/real/` (gitignored).
+Note: `just bench-all` runs simulated benchmarks only; use `just bench-real-all` for real data.
+
+```bash
+# Prepare real datasets (downloads if missing)
+just prepare-real-data
+
+# Run real-data benchmarks
+just bench-real-ols
+just bench-real-poisson
+just bench-real-logit
+just bench-real-all
+
+# Summarize real-data results
+just summarize-real-data
+```
+
+<!-- Real Data OLS -->
+
+<!-- Real Data POISSON -->
+
+<!-- Real Data LOGIT -->
